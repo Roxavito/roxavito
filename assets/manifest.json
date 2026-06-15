@@ -1,0 +1,24 @@
+{
+  "_comment": "Figma design assets for Black Bulls hero (node 19491:37232). The HTML/CSS currently reference the Figma CDN URLs directly. Run scripts/fetch-assets.sh to vendor them into this folder, then swap the URLs for the local filenames.",
+  "source": "https://www.figma.com/design/1ncbtjvU0IrUy66eT3w38n/?node-id=19491-37232",
+  "assets": {
+    "heroBgImage.png": "https://www.figma.com/api/mcp/asset/70184c39-c1f2-44b3-9528-6a5b1e768eb7",
+    "heroBackgroundImage.png": "https://www.figma.com/api/mcp/asset/946c8d52-6a8b-4aa5-9253-88874c954783",
+    "rectangle45.png": "https://www.figma.com/api/mcp/asset/6a8d88de-00ae-41fc-8f64-0e47ad4f24ab",
+    "rectangle46.png": "https://www.figma.com/api/mcp/asset/b47b7c5e-d531-4836-bb15-35b6ea886025",
+    "rectangle47.png": "https://www.figma.com/api/mcp/asset/633b25c7-1b5e-4185-9845-254a90370891",
+    "black162.png": "https://www.figma.com/api/mcp/asset/5d2ca5fa-9b9a-4d98-a49f-3fd5c9580741",
+    "black163.png": "https://www.figma.com/api/mcp/asset/293e77d3-febe-4642-8c14-d81702ab47a9",
+    "stars0.png": "https://www.figma.com/api/mcp/asset/a79b75f9-a2d9-4427-8705-d293319046f2",
+    "stars1.png": "https://www.figma.com/api/mcp/asset/21162e6c-4370-436e-bd38-046128d3b87f",
+    "stars2.png": "https://www.figma.com/api/mcp/asset/f7154de3-94b3-4d41-bec3-119671b101a0",
+    "stars3.png": "https://www.figma.com/api/mcp/asset/d0beecb9-2407-4ad8-90c3-15b67ffd224c",
+    "heroShadowEllipse.png": "https://www.figma.com/api/mcp/asset/3a38d06e-a2db-4bf8-9614-4011db58ece6",
+    "logo.png": "https://www.figma.com/api/mcp/asset/981af1fe-d4fc-4243-aa4d-dc90d476ffe9",
+    "headlineBull.png": "https://www.figma.com/api/mcp/asset/b386e21c-d44b-40ad-8b90-e9ca2d661490",
+    "heroDecorativeVector.png": "https://www.figma.com/api/mcp/asset/22437062-b837-4575-8a72-ba80937a4a8a",
+    "heroGlowEllipse.png": "https://www.figma.com/api/mcp/asset/55929b38-d908-4d55-9d55-8c4b2c8e842a",
+    "ellipse25952.png": "https://www.figma.com/api/mcp/asset/64bb102a-1499-4a4a-a858-49da19acbade",
+    "line1.png": "https://www.figma.com/api/mcp/asset/8820b98a-ad93-4587-84ed-924ad5238702"
+  }
+}

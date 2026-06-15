@@ -1,0 +1,546 @@
+/* =========================================================================
+   Black Bulls — Hero landing page
+   Faithful implementation of Figma node 19491:37232 (1440 x 1024 hero).
+   Coordinates below mirror the Figma frame exactly.
+   ========================================================================= */
+
+:root {
+  --bg: #010101;
+
+  /* Font stacks. Gilroy / SF Pro / Tahoma are not freely available, so they
+     fall back to the closest free equivalents while keeping the design intent. */
+  --font-jakarta: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-ubuntu: "Ubuntu", system-ui, sans-serif;
+  --font-sf: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Plus Jakarta Sans", sans-serif;
+  --font-gilroy: "Gilroy", "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-tahoma: Tahoma, Geneva, "Plus Jakarta Sans", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background: var(--bg);
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  overflow-x: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fixed design canvas — pixel-faithful to the 1440px Figma frame. */
+.canvas {
+  position: relative;
+  width: 1440px;
+  height: 1400px;
+  flex: 0 0 1440px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+img {
+  display: block;
+}
+
+/* ------------------------------------------------------------------ Hero */
+.hero {
+  position: absolute;
+  inset: 0;
+}
+
+/* Hero background image + bottom fade */
+.hero-bg-image {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1440px;
+  height: 1024px;
+  overflow: hidden;
+}
+.hero-bg-image__img {
+  position: absolute;
+  top: 0;
+  left: -0.21%;
+  width: 100.42%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero-bg-image__fade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 84.375%,
+    rgba(0, 0, 0, 0.98) 94.708%,
+    #000 100%
+  );
+}
+
+/* Decorative star textures */
+.stars {
+  position: absolute;
+  width: 511.928px;
+  height: 435.514px;
+}
+.stars img {
+  width: 100%;
+  height: 100%;
+}
+.stars--right-a {
+  left: 927.76px;
+  top: 0;
+  opacity: 0.3;
+  transform: rotate(180deg) scaleY(-1);
+}
+.stars--right-b {
+  left: 790.69px;
+  top: 107.49px;
+  opacity: 0.3;
+  transform: rotate(180deg) scaleY(-1);
+}
+.stars--left-a {
+  left: 0;
+  top: 0;
+  opacity: 0.1;
+}
+.stars--left-b {
+  left: 137.08px;
+  top: 107.49px;
+  opacity: 0.1;
+}
+
+/* Main bull photo */
+.hero-photo {
+  position: absolute;
+  left: 0;
+  top: 77px;
+  width: 1418px;
+  height: 960px;
+  pointer-events: none;
+}
+.hero-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: bottom;
+}
+
+/* Decorative vector */
+.hero-decorative-vector {
+  position: absolute;
+  left: 291px;
+  top: 114px;
+  width: 271.5px;
+  height: 331px;
+}
+.hero-decorative-vector img {
+  position: absolute;
+  inset: -106.34% -129.65%;
+  width: auto;
+  max-width: none;
+}
+
+/* Glow ellipse behind the badge */
+.hero-glow-ellipse {
+  position: absolute;
+  left: 487px;
+  top: 363px;
+  width: 152px;
+  height: 152px;
+}
+.hero-glow-ellipse img {
+  position: absolute;
+  inset: -186.84%;
+  width: auto;
+  max-width: none;
+}
+
+/* Soft shadow ellipse under the headline */
+.hero-shadow-ellipse {
+  position: absolute;
+  left: calc(50% - 141.5px);
+  top: 150px;
+  transform: translateX(-50%);
+  width: 671px;
+  height: 148px;
+  opacity: 0.8;
+  pointer-events: none;
+}
+.hero-shadow-ellipse img {
+  width: 100%;
+  height: 100%;
+}
+
+/* --------------------------------------------------------------- Navbar */
+.navbar {
+  position: absolute;
+  top: 37px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 243px;
+  z-index: 20;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.logo__mark {
+  width: 32.927px;
+  height: 32.927px;
+}
+.logo__text {
+  font-family: var(--font-ubuntu);
+  font-weight: 700;
+  font-size: 27.25px;
+  line-height: 28.385px;
+  letter-spacing: -0.8175px;
+  color: #fff;
+  white-space: nowrap;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  list-style: none;
+}
+.nav-links__item {
+  font-family: var(--font-sf);
+  font-weight: 400;
+  font-size: 16px;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.nav-links__item--active {
+  font-weight: 700;
+}
+.btn-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 129px;
+  padding: 14px 16px;
+  background: #fff;
+  border-radius: 100px;
+  font-family: var(--font-tahoma);
+  font-size: 16px;
+  line-height: 1.26;
+  color: #1b1a1a;
+  text-decoration: none;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------- Headline */
+.hero-headline {
+  position: absolute;
+  left: 209px;
+  top: 196.88px;
+}
+.hero-headline__text {
+  position: absolute;
+  left: calc(720px - 209px);
+  top: calc(201px - 196.88px);
+  transform: translateX(-50%);
+  font-family: var(--font-gilroy);
+  font-weight: 600;
+  font-size: 246.76px;
+  line-height: 246.587px;
+  letter-spacing: -17.2732px;
+  white-space: nowrap;
+  background-image: linear-gradient(120.47deg, #ccd1d7 32.884%, #4d5054 73.111%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero-headline__bull {
+  position: absolute;
+  left: calc(761.3px - 209px);
+  top: 0;
+  width: 490.135px;
+  height: 246.132px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-headline__bull img {
+  width: 485.746px;
+  height: 237.002px;
+  transform: rotate(-1.08deg);
+}
+
+/* ---------------------------------------------------------------- Badge */
+.hero-badge {
+  position: absolute;
+  left: 243px;
+  top: 423px;
+  width: 367px;
+  height: 81px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+  backdrop-filter: blur(16.75px);
+  -webkit-backdrop-filter: blur(16.75px);
+  z-index: 10;
+}
+.hero-badge__text {
+  position: absolute;
+  left: 184.5px;
+  top: 13.5px;
+  transform: translateX(-50%);
+  font-family: var(--font-gilroy);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 45.217px;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+}
+.hero-badge__sparkle {
+  position: absolute;
+  left: 91px;
+  top: -8px;
+  width: 45px;
+  height: 45px;
+  background-image: linear-gradient(99.78deg, #fff 34.835%, #797979 65.258%);
+  -webkit-mask: url("https://www.figma.com/api/mcp/asset/6a8d88de-00ae-41fc-8f64-0e47ad4f24ab") center / 45px 45px no-repeat;
+  mask: url("https://www.figma.com/api/mcp/asset/6a8d88de-00ae-41fc-8f64-0e47ad4f24ab") center / 45px 45px no-repeat;
+}
+
+/* ------------------------------------------------------------------ CTA */
+.hero-cta {
+  position: absolute;
+  left: 50%;
+  top: 879px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 270px;
+  height: 66px;
+  background: #3a54ff;
+  border-radius: 50px;
+  font-family: var(--font-sf);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 20px;
+  color: #fff;
+  text-decoration: none;
+  text-align: center;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* ---------------------------------------------------- Description block */
+.hero-description {
+  position: absolute;
+  left: 88px;
+  top: 814px;
+  width: 290px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 10;
+}
+.hero-description__sparkles {
+  position: relative;
+  height: 39px;
+}
+.sparkle {
+  position: absolute;
+  background-image: linear-gradient(99.78deg, #fff 34.835%, #797979 65.258%);
+}
+.sparkle--lg {
+  left: 0;
+  top: 5.68px;
+  width: 33.318px;
+  height: 33.318px;
+  -webkit-mask: url("https://www.figma.com/api/mcp/asset/b47b7c5e-d531-4836-bb15-35b6ea886025") center / 33.318px 33.318px no-repeat;
+  mask: url("https://www.figma.com/api/mcp/asset/b47b7c5e-d531-4836-bb15-35b6ea886025") center / 33.318px 33.318px no-repeat;
+}
+.sparkle--sm {
+  left: 22.58px;
+  top: 0;
+  width: 18.325px;
+  height: 18.325px;
+  -webkit-mask: url("https://www.figma.com/api/mcp/asset/633b25c7-1b5e-4185-9845-254a90370891") center / 18.325px 18.325px no-repeat;
+  mask: url("https://www.figma.com/api/mcp/asset/633b25c7-1b5e-4185-9845-254a90370891") center / 18.325px 18.325px no-repeat;
+}
+.hero-description__title {
+  font-family: var(--font-gilroy);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 40px;
+  background-image: linear-gradient(to bottom, #fff, #999);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero-description__subtitle {
+  font-family: var(--font-gilroy);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 18px;
+  white-space: nowrap;
+  background-image: linear-gradient(to right, #fff, #979797);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------------------------------------------------------------- Stats */
+.stats {
+  position: absolute;
+  left: 1083px;
+  top: 862px;
+  width: 287px;
+  height: 92px;
+  z-index: 10;
+}
+.stats__value {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-gilroy);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 43.2px;
+  white-space: nowrap;
+  background-image: linear-gradient(85.86deg, #f3f8ff 38.467%, #bbbec2 116.86%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.stats__label {
+  position: absolute;
+  left: 126px;
+  top: 16px;
+  width: 187px;
+  font-family: var(--font-sf);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 19px;
+  background-image: linear-gradient(to right, #ccd0d4, #989b9e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.stats__desc {
+  position: absolute;
+  left: 0;
+  top: 54px;
+  width: 287px;
+  font-family: var(--font-sf);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  color: #f4f4f4;
+}
+
+/* ------------------------------------------------------------ Info card */
+.info-card {
+  position: absolute;
+  left: calc(50% + 522.5px);
+  top: 512px;
+  transform: translateX(-50%);
+  width: 319px;
+  height: 287px;
+  overflow: hidden;
+  border-radius: 4px 4px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+  backdrop-filter: blur(16.75px);
+  -webkit-backdrop-filter: blur(16.75px);
+  z-index: 10;
+}
+.info-card__line-glow {
+  position: absolute;
+  left: 67px;
+  top: -24px;
+  width: 174px;
+  height: 34px;
+}
+.info-card__line-glow img {
+  position: absolute;
+  inset: -261.18% -51.03%;
+  width: auto;
+  max-width: none;
+}
+.info-card__divider {
+  position: absolute;
+  left: 65px;
+  top: -1px;
+  width: 188px;
+  height: 2px;
+  transform: rotate(180deg);
+}
+.info-card__divider img {
+  width: 100%;
+  height: auto;
+}
+.info-card__text {
+  position: absolute;
+  left: calc(50% - 137.5px);
+  top: 32px;
+  width: 275px;
+  font-family: var(--font-gilroy);
+  font-weight: 500;
+  font-size: 18px;
+  background-image: linear-gradient(to bottom, #fff, #999);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.info-card__text em {
+  font-style: italic;
+  font-weight: 600;
+}
+.info-card__image {
+  position: absolute;
+  left: 49px;
+  top: 159px;
+  width: 220px;
+  height: 220px;
+}
+.info-card__image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.info-card__image-blur {
+  filter: blur(29.55px);
+}
+
+/* -------------------------------------------------- Experience heading */
+.experience-heading {
+  position: absolute;
+  top: 1164px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1002.475px;
+  font-family: var(--font-jakarta);
+  font-weight: 500;
+  font-size: 80px;
+  line-height: normal;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+.experience-heading__accent {
+  color: #fff;
+}

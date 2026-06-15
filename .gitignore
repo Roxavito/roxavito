@@ -1,0 +1,12 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Vendored Figma assets (re-fetch with scripts/fetch-assets.sh)
+assets/*.png
+assets/*.jpg
+assets/*.svg
