@@ -1,3 +1,10 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+
 # OS
 .DS_Store
 Thumbs.db
@@ -6,7 +13,10 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Vendored Figma assets (re-fetch with scripts/fetch-assets.sh)
-assets/*.png
-assets/*.jpg
-assets/*.svg
+# Logs
+*.log
+npm-debug.log*
+
+# Env
+.env
+.env.local

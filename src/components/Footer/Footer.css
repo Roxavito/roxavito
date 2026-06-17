@@ -1,0 +1,111 @@
+.footer {
+  border-top: 1px solid var(--border);
+  background: linear-gradient(to bottom, rgba(58, 84, 255, 0.05), transparent);
+  padding-top: 56px;
+}
+
+.footer__inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 48px;
+  flex-wrap: wrap;
+  padding-bottom: 40px;
+}
+
+.footer__brand .brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.footer__brand .brand__mark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #2a2f3a, #000);
+  border: 1px solid var(--border-strong);
+  color: #fff;
+}
+.footer__brand .brand__text {
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+.footer__tagline {
+  margin-top: 16px;
+  max-width: 320px;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.footer__news {
+  min-width: 280px;
+}
+.footer__news-title {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.footer__form {
+  display: flex;
+  gap: 10px;
+}
+.footer__form input {
+  flex: 1;
+  min-width: 0;
+  padding: 13px 16px;
+  border-radius: 100px;
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.footer__form input::placeholder {
+  color: var(--text-faint);
+}
+.footer__form input:focus {
+  border-color: rgba(58, 84, 255, 0.6);
+}
+.footer__form button {
+  padding: 13px 24px;
+  border-radius: 100px;
+  border: none;
+  background: #fff;
+  color: #1b1a1a;
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: transform 0.2s ease;
+}
+.footer__form button:hover {
+  transform: translateY(-1px);
+}
+.footer__fineprint {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+.footer__fineprint a {
+  color: var(--text-dim);
+  text-decoration: underline;
+}
+
+.footer__bottom {
+  border-top: 1px solid var(--border);
+  padding: 22px 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+@media (max-width: 640px) {
+  .footer__form {
+    flex-direction: column;
+  }
+}

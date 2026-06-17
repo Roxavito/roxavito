@@ -1,0 +1,117 @@
+/* =========================================================================
+   Black Bulls — global tokens & base styles
+   Design identity carried over from the Figma frame (node 19491:37232):
+   near-black canvas, Plus Jakarta Sans / Ubuntu, electric-blue accent,
+   silvery text gradients.
+   ========================================================================= */
+
+:root {
+  --bg: #010101;
+  --bg-soft: #0a0b0f;
+  --bg-card: #0d0f15;
+  --bg-card-2: #11131b;
+
+  --accent: #3a54ff;
+  --accent-soft: #2a3bc7;
+  --accent-glow: rgba(58, 84, 255, 0.45);
+
+  --text: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.62);
+  --text-faint: rgba(255, 255, 255, 0.38);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-brand: "Ubuntu", system-ui, sans-serif;
+
+  --maxw: 1200px;
+
+  /* silvery text gradient used across headlines */
+  --grad-silver: linear-gradient(120deg, #ccd1d7 30%, #65696e 80%);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding-inline: 24px;
+}
+
+/* shared silvery gradient text helper */
+.grad-text {
+  background-image: var(--grad-silver);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* shared section heading block */
+.section-head {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.section-head h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(28px, 4vw, 44px);
+  letter-spacing: -0.02em;
+}
+.section-head p {
+  margin-top: 10px;
+  color: var(--text-dim);
+  font-size: 15px;
+}
+
+section {
+  position: relative;
+}
+
+/* respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
