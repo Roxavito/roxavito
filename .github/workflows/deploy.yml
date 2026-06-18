@@ -5,6 +5,7 @@ on:
     branches:
       - claude/practical-clarke-ui5yey
       - claude/busy-tesla-27c7im
+      - claude/optimistic-ptolemy-firh2t
   workflow_dispatch:
 
 permissions:
