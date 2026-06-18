@@ -1,34 +1,65 @@
 /* =========================================================================
-   Black Bulls — global tokens & base styles
-   Design identity carried over from the Figma frame (node 19491:37232):
-   near-black canvas, Plus Jakarta Sans / Ubuntu, electric-blue accent,
-   silvery text gradients.
+   reactbits.dev design system — exact theme tokens
+   (mirrors src/css/variables.css from DavidHDev/react-bits @ main)
    ========================================================================= */
 
 :root {
-  --bg: #010101;
-  --bg-soft: #0a0b0f;
-  --bg-card: #0d0f15;
-  --bg-card-2: #11131b;
+  /* backgrounds */
+  --bg-body: #120f17;
+  --bg-card: #1b1722;
+  --bg-elevated: #1b1722;
+  --bg-hover: #373044;
 
-  --accent: #3a54ff;
-  --accent-soft: #2a3bc7;
-  --accent-glow: rgba(58, 84, 255, 0.45);
+  /* borders */
+  --border-primary: #2f293a;
+  --border-secondary: #2f293a;
+  --border-subtle: #2f293a;
 
-  --text: #ffffff;
-  --text-dim: rgba(255, 255, 255, 0.62);
-  --text-faint: rgba(255, 255, 255, 0.38);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.16);
+  /* brand / accent */
+  --color-primary: #a855f7;
+  --color-primary-dim: #8660fa;
+  --color-accent: #b497cf;
+  --color-accent-muted: #b497cf;
 
-  --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-brand: "Ubuntu", system-ui, sans-serif;
+  /* text */
+  --text-primary: #ffffff;
+  --text-secondary: #f5f5f5;
+  --text-muted: #aaaaaa;
+  --text-dimmed: #a1a1aa;
+  --text-link: #ffffff;
 
-  --maxw: 1200px;
+  /* radii */
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 50px;
 
-  /* silvery text gradient used across headlines */
-  --grad-silver: linear-gradient(120deg, #ccd1d7 30%, #65696e 80%);
+  /* shadows */
+  --shadow-dropdown: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-primary: 0 2px 8px rgba(82, 39, 255, 0.4);
+
+  /* transitions */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+
+  /* signature animated title gradient */
+  --gradient-title: linear-gradient(
+    135deg,
+    #fff 0%,
+    #8660fa 20%,
+    #a855f7 40%,
+    #8400ff 60%,
+    #a855f7 80%,
+    #fff 100%
+  );
+
+  /* fonts */
+  --font-sans: 'Geist Variable', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --maxw: 1180px;
 }
 
 * {
@@ -42,12 +73,13 @@ html {
 }
 
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-body);
+  background: var(--bg-body);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  line-height: 1.5;
 }
 
 img {
@@ -76,36 +108,73 @@ ul {
   padding-inline: 24px;
 }
 
-/* shared silvery gradient text helper */
-.grad-text {
-  background-image: var(--grad-silver);
+/* signature gradient title text */
+.gradient-title {
+  background-image: var(--gradient-title);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  animation: title-shine 8s linear infinite;
 }
-
-/* shared section heading block */
-.section-head {
-  text-align: center;
-  margin-bottom: 56px;
-}
-.section-head h2 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(28px, 4vw, 44px);
-  letter-spacing: -0.02em;
-}
-.section-head p {
-  margin-top: 10px;
-  color: var(--text-dim);
-  font-size: 15px;
+@keyframes title-shine {
+  to {
+    background-position: 200% center;
+  }
 }
 
 section {
   position: relative;
 }
 
-/* respect reduced motion */
+/* shared section heading */
+.section-head {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.section-head h2 {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.section-head p {
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+/* shared pill button styles (reactbits.dev look) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: var(--radius-full);
+  font-size: 15px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: transform var(--transition-base), background var(--transition-base),
+    border-color var(--transition-base), box-shadow var(--transition-base);
+}
+.btn-primary {
+  background: var(--color-primary);
+  color: #0c0712;
+  font-weight: 600;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(168, 85, 247, 0.45);
+}
+.btn-ghost {
+  background: var(--bg-card);
+  border-color: var(--border-primary);
+  color: var(--text-primary);
+}
+.btn-ghost:hover {
+  background: var(--bg-hover);
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;

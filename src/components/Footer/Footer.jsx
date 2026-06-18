@@ -1,56 +1,37 @@
-import { useState } from 'react';
 import './Footer.css';
 
 export default function Footer() {
-  const [email, setEmail] = useState('');
-
-  const onSubmit = e => {
-    e.preventDefault();
-    // wire up to your newsletter provider here
-    setEmail('');
-  };
-
+  const year = new Date().getFullYear();
   return (
     <footer className="footer">
       <div className="container footer__inner">
         <div className="footer__brand">
-          <a className="brand" href="#">
-            <span className="brand__mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
-                <path
-                  d="M12 2c1.5 2.5 4 3 6 3-1 4-3 6-6 7-3-1-5-3-6-7 2 0 4.5-.5 6-3Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </span>
-            <span className="brand__text">Black Bulls</span>
+          <a className="footer__logo" href="#">
+            <span className="footer__logo-mark" aria-hidden="true" />
+            Black Bulls
           </a>
-          <p className="footer__tagline">
-            Progress Through FKNX Partner Ranks and Unlock New Rewards
-          </p>
+          <p className="footer__tagline">Digital products for ambitious brands.</p>
         </div>
 
-        <div className="footer__news">
-          <p className="footer__news-title">Stay up to date</p>
-          <form className="footer__form" onSubmit={onSubmit}>
-            <input
-              type="email"
-              required
-              placeholder="Enter your email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              aria-label="Email address"
-            />
-            <button type="submit">Subscribe</button>
-          </form>
-          <p className="footer__fineprint">
-            By subscribing you agree to our <a href="#">Privacy Policy</a>
-          </p>
-        </div>
+        <nav className="footer__cols" aria-label="Footer">
+          <div className="footer__col">
+            <p className="footer__col-title">Studio</p>
+            <a href="#">Services</a>
+            <a href="#">Showcase</a>
+            <a href="#">About us</a>
+          </div>
+          <div className="footer__col">
+            <p className="footer__col-title">Connect</p>
+            <a href="#">Careers</a>
+            <a href="#">Community</a>
+            <a href="#">Contact</a>
+          </div>
+        </nav>
       </div>
 
       <div className="container footer__bottom">
-        <span>© {new Date().getFullYear()} Black Bulls. All rights reserved.</span>
+        <span>Created with ♥ by Black Bulls</span>
+        <span>© {year} Black Bulls</span>
       </div>
     </footer>
   );
