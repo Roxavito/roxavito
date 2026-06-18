@@ -3,6 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
+      - claude/practical-clarke-ui5yey
       - claude/busy-tesla-27c7im
   workflow_dispatch:
 
