@@ -2,46 +2,39 @@ import SpotlightCard from '../../reactbits/SpotlightCard/SpotlightCard.jsx';
 import './Features.css';
 
 const FEATURES = [
-  {
-    title: 'Brand & Identity',
-    desc: "Logos, systems, and visual languages that make ambitious brands impossible to ignore."
-  },
-  {
-    title: 'Web & Product Design',
-    desc: "Marketing sites and product UIs designed to convert — fast, clear, and unmistakably yours."
-  },
-  {
-    title: 'Motion & Interaction',
-    desc: "Micro-interactions and animated experiences that make every scroll feel alive."
-  },
-  {
-    title: 'Design to Code',
-    desc: "Pixel-faithful builds in React. What you approve in design is exactly what ships."
-  },
-  {
-    title: 'Built to Scale',
-    desc: "Reusable components and clean systems so your product grows without the chaos."
-  },
-  {
-    title: 'Trusted Delivery',
-    desc: "300+ clients, proven results. Beautiful work, shipped on time, every time."
-  }
+  { title: 'Money-back guarantee', desc: 'Pinnacle of VIP Trading!', size: 'sm', accent: 'arrow' },
+  { title: 'Unlimited Revisions guarantee', desc: 'Pinnacle of VIP Trading!', size: 'lg', accent: 'clock' },
+  { title: 'Rush Design Option', desc: 'Pinnacle of VIP Trading!', size: 'lg', accent: 'card' },
+  { title: 'Lifetime Support', desc: 'Pinnacle of VIP Trading!', size: 'sm', accent: 'orbit' }
 ];
 
 export default function Features() {
   return (
-    <section className="features">
+    <section className="features" id="features">
       <div className="container">
-        <div className="section-head">
-          <h2>What&rsquo;s inside</h2>
-          <p>Everything an ambitious brand needs — design, motion, and code in one place.</p>
+        <h2 className="features__intro">
+          <span className="features__intro-strong">Experience the</span>{' '}
+          <span className="features__intro-dim">World of Forex with Ease and Efficiency</span>
+        </h2>
+
+        <div className="section-head features__head">
+          <h2>Elite Trading Redefined</h2>
+          <p>Black Account: The Pinnacle of VIP Trading!</p>
         </div>
 
         <div className="features__grid">
           {FEATURES.map(f => (
-            <SpotlightCard key={f.title} className="feature-card" spotlightColor="rgba(168, 85, 247, 0.25)">
-              <h3 className="feature-card__title">{f.title}</h3>
-              <p className="feature-card__desc">{f.desc}</p>
+            <SpotlightCard
+              key={f.title}
+              className={`feature-card feature-card--${f.size}`}
+              spotlightColor="rgba(58, 84, 255, 0.25)"
+            >
+              <span className="feature-card__badge">No Fees</span>
+              <span className={`feature-card__art feature-card__art--${f.accent}`} aria-hidden="true" />
+              <div className="feature-card__text">
+                <h3 className="feature-card__title">{f.title}</h3>
+                <p className="feature-card__desc">{f.desc}</p>
+              </div>
             </SpotlightCard>
           ))}
         </div>

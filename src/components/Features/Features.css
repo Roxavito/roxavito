@@ -1,41 +1,170 @@
 .features {
-  padding: 100px 0;
+  padding: 60px 0 120px;
 }
 
+/* "Experience the World of Forex..." intro band */
+.features__intro {
+  max-width: 1000px;
+  margin: 0 auto 120px;
+  text-align: center;
+  font-size: clamp(36px, 6vw, 80px);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.features__intro-strong {
+  color: #fff;
+}
+.features__intro-dim {
+  color: #fff;
+  opacity: 0.6;
+}
+
+.features__head {
+  margin-bottom: 48px;
+}
+
+/* asymmetric 2x2 card grid */
 .features__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
 }
-
 .feature-card {
-  border-radius: var(--radius-lg) !important;
-  border: 1px solid var(--border-primary) !important;
+  position: relative;
+  height: 387px;
+  border-radius: var(--radius-xl) !important;
+  border: 1px solid var(--border-secondary) !important;
   background: var(--bg-card) !important;
-  padding: 28px !important;
-  min-height: 170px;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+.feature-card--sm {
+  flex: 542 1 340px;
+}
+.feature-card--lg {
+  flex: 700 1 420px;
 }
 
-.feature-card__title {
-  font-size: 19px;
+.feature-card__badge {
+  position: absolute;
+  top: 26px;
+  left: 26px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 28px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-size: 16px;
   font-weight: 600;
-  letter-spacing: -0.01em;
-  margin-bottom: 10px;
+  color: #fff;
 }
 
+.feature-card__text {
+  position: absolute;
+  left: 30px;
+  bottom: 30px;
+  z-index: 3;
+  max-width: 320px;
+}
+.feature-card__title {
+  font-size: clamp(26px, 2.6vw, 36px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  background: linear-gradient(90deg, #fff, rgba(255, 255, 255, 0.37));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 .feature-card__desc {
-  font-size: 15px;
-  line-height: 1.6;
+  margin-top: 14px;
+  font-size: 22px;
   color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* decorative art per card */
+.feature-card__art {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+.feature-card__art--arrow {
+  top: -40px;
+  right: -40px;
+  width: 360px;
+  height: 320px;
+  background:
+    radial-gradient(60% 60% at 70% 30%, rgba(58, 84, 255, 0.45), transparent 70%);
+  filter: blur(6px);
+}
+.feature-card__art--arrow::after {
+  content: '';
+  position: absolute;
+  top: 70px;
+  right: 90px;
+  width: 120px;
+  height: 120px;
+  border-top: 10px solid #62b6ff;
+  border-right: 10px solid #62b6ff;
+  transform: rotate(-45deg);
+  border-radius: 6px;
+  box-shadow: 0 0 40px rgba(98, 182, 255, 0.7);
+}
+.feature-card__art--clock {
+  top: 50px;
+  right: 60px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: conic-gradient(from 200deg, #3a54ff, #62b6ff, #0b0b14 70%);
+  filter: blur(2px);
+  opacity: 0.85;
+  mix-blend-mode: screen;
+}
+.feature-card__art--clock::after {
+  content: '';
+  position: absolute;
+  inset: 28px;
+  border-radius: 50%;
+  background: #0f0f12;
+}
+.feature-card__art--card {
+  bottom: -30px;
+  right: -20px;
+  width: 320px;
+  height: 250px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(58, 84, 255, 0.5), rgba(98, 182, 255, 0.15));
+  transform: rotate(-12deg);
+  box-shadow: 0 30px 80px rgba(58, 84, 255, 0.35);
+}
+.feature-card__art--orbit {
+  top: -60px;
+  right: -60px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(98, 182, 255, 0.35), transparent 70%);
+}
+.feature-card__art--orbit::after {
+  content: '';
+  position: absolute;
+  inset: 60px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 0 60px rgba(58, 84, 255, 0.4);
 }
 
 @media (max-width: 900px) {
-  .features__grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-@media (max-width: 600px) {
-  .features__grid {
-    grid-template-columns: 1fr;
+  .feature-card--sm,
+  .feature-card--lg {
+    flex: 1 1 100%;
   }
 }

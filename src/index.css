@@ -4,28 +4,28 @@
    ========================================================================= */
 
 :root {
-  /* backgrounds */
-  --bg-body: #120f17;
-  --bg-card: #1b1722;
-  --bg-elevated: #1b1722;
-  --bg-hover: #373044;
+  /* backgrounds — Black Bulls (Figma) near-black theme */
+  --bg-body: #010101;
+  --bg-card: #0f0f12;
+  --bg-elevated: #131318;
+  --bg-hover: #1c1c22;
 
   /* borders */
-  --border-primary: #2f293a;
-  --border-secondary: #2f293a;
-  --border-subtle: #2f293a;
+  --border-primary: rgba(255, 255, 255, 0.08);
+  --border-secondary: rgba(255, 255, 255, 0.06);
+  --border-subtle: rgba(255, 255, 255, 0.04);
 
   /* brand / accent */
-  --color-primary: #a855f7;
-  --color-primary-dim: #8660fa;
-  --color-accent: #b497cf;
-  --color-accent-muted: #b497cf;
+  --color-primary: #3a54ff;
+  --color-primary-dim: #2c43e0;
+  --color-accent: #62b6ff;
+  --color-accent-muted: #98b9ff;
 
   /* text */
   --text-primary: #ffffff;
-  --text-secondary: #f5f5f5;
-  --text-muted: #aaaaaa;
-  --text-dimmed: #a1a1aa;
+  --text-secondary: #f4f4f4;
+  --text-muted: #d2d2d3;
+  --text-dimmed: #989b9e;
   --text-link: #ffffff;
 
   /* radii */
@@ -37,7 +37,7 @@
 
   /* shadows */
   --shadow-dropdown: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --shadow-primary: 0 2px 8px rgba(82, 39, 255, 0.4);
+  --shadow-primary: 0 4px 8.65px rgba(235, 235, 235, 0.25);
 
   /* transitions */
   --transition-fast: 0.15s ease;
@@ -48,18 +48,22 @@
   --gradient-title: linear-gradient(
     135deg,
     #fff 0%,
-    #8660fa 20%,
-    #a855f7 40%,
-    #8400ff 60%,
-    #a855f7 80%,
+    #98b9ff 25%,
+    #3a54ff 45%,
+    #62b6ff 65%,
+    #98b9ff 80%,
     #fff 100%
   );
+
+  /* heading + service-card title gradients (Figma) */
+  --gradient-heading: linear-gradient(180deg, #fff 0%, #999 100%);
+  --gradient-service: linear-gradient(-13deg, #62b6ff 14%, #ffffff 80%);
 
   /* fonts */
   --font-sans: 'Geist Variable', system-ui, -apple-system, sans-serif;
   --font-mono: 'Geist Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --maxw: 1180px;
+  --maxw: 1280px;
 }
 
 * {
@@ -127,20 +131,23 @@ section {
   position: relative;
 }
 
-/* shared section heading */
+/* shared section heading — Figma "Gilroy Bold 72px" display style */
 .section-head {
   text-align: center;
-  margin-bottom: 56px;
+  margin-bottom: 64px;
 }
 .section-head h2 {
-  font-size: clamp(28px, 4vw, 42px);
-  font-weight: 600;
+  font-size: clamp(38px, 6vw, 72px);
+  font-weight: 700;
+  line-height: 1.05;
   letter-spacing: -0.03em;
+  color: var(--text-muted);
 }
 .section-head p {
-  margin-top: 12px;
+  margin-top: 14px;
   color: var(--text-muted);
-  font-size: 16px;
+  opacity: 0.6;
+  font-size: clamp(16px, 2vw, 24px);
 }
 
 /* shared pill button styles (reactbits.dev look) */
@@ -164,7 +171,7 @@ section {
 }
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 28px rgba(168, 85, 247, 0.45);
+  box-shadow: 0 8px 28px rgba(58, 84, 255, 0.5);
 }
 .btn-ghost {
   background: var(--bg-card);

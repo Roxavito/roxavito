@@ -1,0 +1,134 @@
+.services {
+  padding: 60px 0 120px;
+}
+
+.services__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.service-card {
+  position: relative;
+  height: 513px;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid var(--border-secondary);
+  padding: 54px 28px;
+  text-align: center;
+}
+
+.service-card__title {
+  position: relative;
+  z-index: 3;
+  font-size: clamp(32px, 3vw, 54px);
+  font-weight: 700;
+  line-height: 0.95;
+  text-transform: uppercase;
+  background: var(--gradient-service);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* radial glow behind the device */
+.service-card__glow {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  width: 465px;
+  height: 465px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(58, 84, 255, 0.35), transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* stylized device mockups */
+.service-card__device {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: block;
+  background: linear-gradient(160deg, #2a2a33, #0c0c12);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+.service-card__device .service-card__screen {
+  position: absolute;
+  inset: 6px;
+  border-radius: 6px;
+  background:
+    linear-gradient(135deg, rgba(98, 182, 255, 0.4), rgba(58, 84, 255, 0.15)),
+    #0a0a10;
+  overflow: hidden;
+}
+.service-card__device .service-card__screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0 2px, transparent 2px 16px);
+}
+
+/* laptop */
+.service-card__device--laptop {
+  width: 300px;
+  height: 196px;
+  border-radius: 12px 12px 4px 4px;
+  border: 8px solid #15151c;
+  bottom: 60px;
+}
+.service-card__device--laptop::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  width: 360px;
+  height: 14px;
+  transform: translateX(-50%);
+  border-radius: 0 0 14px 14px;
+  background: linear-gradient(180deg, #1a1a22, #0a0a10);
+}
+
+/* phone */
+.service-card__device--phone {
+  width: 168px;
+  height: 320px;
+  border-radius: 28px;
+  border: 8px solid #15151c;
+  bottom: 40px;
+}
+.service-card__device--phone .service-card__screen {
+  border-radius: 20px;
+}
+
+.service-card__more {
+  position: absolute;
+  left: 50%;
+  bottom: 32px;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.service-card__more:hover {
+  color: var(--color-accent);
+}
+
+@media (max-width: 900px) {
+  .services__grid {
+    grid-template-columns: 1fr;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+}
