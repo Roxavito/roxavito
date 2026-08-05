@@ -91,8 +91,24 @@ body {
 }
 
 @media (max-width: 880px) {
+  /* A CSS Grid with an auto-sized row gives .chat-panel no reserved
+     height here — it shrinks to its min-content instead of filling the
+     screen, so its internal .chat-scroll region has nothing to scroll
+     within and the message list effectively disappears off-screen.
+     Switching to a scrollable flex column and giving .chat-panel an
+     explicit height fixes that: the chat keeps its own scroll area, and
+     the page scrolls to reach the status cards below it. */
   .app-body {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .chat-panel {
+    height: 70vh;
+    min-height: 420px;
+    flex-shrink: 0;
+    border-left: none;
+    border-bottom: 1px solid var(--card-border);
   }
   .status-panel {
     order: 2;
@@ -365,6 +381,45 @@ body {
   letter-spacing: 0.3px;
 }
 
+.card-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-family: var(--font);
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 4px;
+  text-align: inherit;
+}
+
+.card-toggle h3 {
+  margin: 0;
+}
+
+.branch-count {
+  font-size: 0.68rem;
+  color: var(--ink-faint);
+  background: var(--bg-elevated);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 0 7px;
+  margin-inline-start: 2px;
+}
+
+.chevron {
+  color: var(--ink-faint);
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+
+.chevron-open {
+  transform: rotate(180deg);
+}
+
 .card p,
 .card li {
   font-size: 0.82rem;
@@ -501,6 +556,26 @@ body {
   font-style: italic;
 }
 
+.task-toggle-done {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px dashed var(--card-border);
+  color: var(--ink-faint);
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-family: var(--font);
+  cursor: pointer;
+  margin-top: 8px;
+  transition: 0.15s;
+}
+
+.task-toggle-done:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+
 .mail-badge {
   display: inline-block;
   margin-inline-start: 6px;
@@ -527,4 +602,28 @@ body {
   height: 100vh;
   color: var(--ink-faint);
   font-size: 1rem;
+}
+
+.crash-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: 100%;
+  min-height: 220px;
+  padding: 24px;
+  color: var(--ink-dim);
+  text-align: center;
+}
+
+.crash-screen button {
+  background: linear-gradient(160deg, var(--gold-bright), var(--gold));
+  color: #241c0d;
+  border: none;
+  border-radius: var(--radius);
+  padding: 8px 20px;
+  font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer;
 }

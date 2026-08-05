@@ -39,6 +39,20 @@ function extractBlock(text, openTag, closeTag) {
   return { rest: text.slice(0, openIdx), data };
 }
 
+// Defense-in-depth against a malformed response (e.g. the model opens
+// <STATE> but never closes it): extractBlock only strips a tag when both
+// its open and close markers are found, so a dangling open tag would
+// otherwise leak raw markup into the player-visible narrative — and get
+// permanently baked into history.json, feeding it back to the model as
+// "context" on every future turn. If either tag still appears after
+// extraction, cut the narrative off right before it.
+function stripStrayTags(narrative) {
+  const idx = narrative.search(/<STATE>|<CHOICES>/);
+  if (idx === -1) return narrative;
+  console.warn("Stray <STATE>/<CHOICES> tag left in model output after extraction — trimming it out.");
+  return narrative.slice(0, idx).trim();
+}
+
 function splitResponse(fullText) {
   // <STATE> is always the final block the model writes, so strip it first.
   const { rest: withoutState, data: stateUpdate } = extractBlock(
@@ -53,7 +67,7 @@ function splitResponse(fullText) {
     CHOICES_CLOSE
   );
   const choices = Array.isArray(choicesData) ? choicesData : null;
-  return { narrative: narrativeRaw.trim(), stateUpdate, choices };
+  return { narrative: stripStrayTags(narrativeRaw.trim()), stateUpdate, choices };
 }
 
 export async function askGameMaster({ currentState, history, playerMessage }) {

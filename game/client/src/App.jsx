@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ChatPanel from "./components/ChatPanel.jsx";
 import StatusPanel from "./components/StatusPanel.jsx";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import { fetchState, fetchHistory, sendMessage, resetGame, fetchSceneImage } from "./api.js";
 
 function newId() {
@@ -98,15 +99,19 @@ export default function App() {
         </button>
       </header>
       <div className="app-body">
-        <ChatPanel
-          messages={messages}
-          choices={choices}
-          schedule={state?.schedule}
-          onSend={handleSend}
-          loading={loading}
-          error={error}
-        />
-        <StatusPanel state={state} onRequestTaskReport={handleRequestTaskReport} />
+        <ErrorBoundary>
+          <ChatPanel
+            messages={messages}
+            choices={choices}
+            schedule={state?.schedule}
+            onSend={handleSend}
+            loading={loading}
+            error={error}
+          />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <StatusPanel state={state} onRequestTaskReport={handleRequestTaskReport} />
+        </ErrorBoundary>
       </div>
     </>
   );

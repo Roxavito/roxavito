@@ -31,7 +31,16 @@ export async function searchSceneImage(query) {
     const pages = data?.query?.pages;
     if (!pages) return null;
 
-    for (const page of Object.values(pages)) {
+    // `pages` is a plain object keyed by numeric page ID. JS engines always
+    // iterate integer-like object keys in ascending numeric order, NOT in
+    // the search-relevance order MediaWiki actually returned them in — so
+    // without re-sorting by the API's own `index` field, the "first" result
+    // picked below is essentially arbitrary rather than the best match.
+    const rankedPages = Object.values(pages).sort(
+      (a, b) => (a?.index ?? 0) - (b?.index ?? 0)
+    );
+
+    for (const page of rankedPages) {
       const info = page?.imageinfo?.[0];
       const thumb = info?.thumburl;
       if (thumb) {
