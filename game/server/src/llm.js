@@ -57,13 +57,14 @@ function splitResponse(fullText) {
 }
 
 export async function askGameMaster({ currentState, history, playerMessage }) {
-  const [stableSystem, stateSystem] = buildSystemBlocks(currentState);
+  const [stableSystem, stateSystem, rulesSystem] = buildSystemBlocks(currentState);
 
   const messages = [
     { role: "system", content: stableSystem },
     { role: "system", content: stateSystem },
     ...history,
     { role: "user", content: playerMessage },
+    { role: "system", content: rulesSystem },
   ];
 
   const response = await getClient().chat.completions.create({
