@@ -3,6 +3,10 @@
 The Black Bulls landing page, rebuilt from scratch as a **React + Vite** app using
 animated components from [react-bits](https://github.com/DavidHDev/react-bits).
 
+> **Unrelated side project in this repo:** [`game/`](./game) contains a separate app —
+> "امپراتوری چوسان", an AI-game-master country-management simulation. See
+> [`game/README.md`](./game/README.md) to run it.
+
 > The previous dependency-free HTML/CSS version is preserved under [`legacy/`](./legacy).
 
 ## Run it

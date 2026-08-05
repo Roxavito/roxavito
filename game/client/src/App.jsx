@@ -1,0 +1,78 @@
+import { useEffect, useState } from "react";
+import ChatPanel from "./components/ChatPanel.jsx";
+import StatusPanel from "./components/StatusPanel.jsx";
+import { fetchState, fetchHistory, sendMessage, resetGame } from "./api.js";
+
+export default function App() {
+  const [state, setState] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [booting, setBooting] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const [s, h] = await Promise.all([fetchState(), fetchHistory()]);
+        setState(s.state);
+        setMessages(h.history);
+      } catch (err) {
+        setError(
+          "اتصال به سرور برقرار نشد. مطمئن شو سرور بازی (game/server) در حال اجراست."
+        );
+      } finally {
+        setBooting(false);
+      }
+    })();
+  }, []);
+
+  async function handleSend(text) {
+    setError(null);
+    setMessages((prev) => [...prev, { role: "user", content: text }]);
+    setLoading(true);
+    try {
+      const res = await sendMessage(text);
+      setMessages((prev) => [...prev, { role: "assistant", content: res.narrative }]);
+      setState(res.state);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleReset() {
+    if (!confirm("بازی از اول شروع بشه و کل تاریخچه پاک بشه؟")) return;
+    const res = await resetGame();
+    setState(res.state);
+    setMessages([]);
+    setError(null);
+  }
+
+  if (booting) {
+    return <div className="loading-screen">در حال بارگذاری دربار چوسان...</div>;
+  }
+
+  return (
+    <>
+      <header className="app-header">
+        <div className="app-title">
+          <h1>امپراتوری چوسان</h1>
+          <span>سلطنت روهی کبیر</span>
+        </div>
+        <button className="reset-btn" onClick={handleReset}>
+          شروع دوباره
+        </button>
+      </header>
+      <div className="app-body">
+        <ChatPanel
+          messages={messages}
+          onSend={handleSend}
+          loading={loading}
+          error={error}
+        />
+        <StatusPanel state={state} />
+      </div>
+    </>
+  );
+}

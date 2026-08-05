@@ -1,0 +1,145 @@
+function Card({ title, icon, children }) {
+  return (
+    <div className="card">
+      <h3>
+        <span>{icon}</span>
+        <span>{title}</span>
+      </h3>
+      {children}
+    </div>
+  );
+}
+
+export default function StatusPanel({ state }) {
+  if (!state) return null;
+
+  const {
+    meta = {},
+    treasury = {},
+    army = {},
+    factions = {},
+    openThreads = [],
+    publicMood,
+    lastEventSummary,
+    coreCircle = [],
+    personalCircle = [],
+    councilOfFiveSages = [],
+    nationalPact,
+    difficultyLevel,
+  } = state;
+
+  return (
+    <div className="status-panel">
+      <Card title="پادشاهی چوسان" icon="👑">
+        <div className="kv">
+          <span>سال سلطنت</span>
+          <b>{meta.regnalYear ?? "—"}</b>
+        </div>
+        <div className="kv">
+          <span>روز</span>
+          <b>
+            {meta.day ?? "—"} · {meta.timeOfDay ?? "—"}
+          </b>
+        </div>
+        {meta.seasonNote && (
+          <p style={{ marginTop: 8 }}>{meta.seasonNote}</p>
+        )}
+      </Card>
+
+      <Card title="خزانه" icon="💰">
+        <div className="kv">
+          <span>واحد</span>
+          <b>{treasury.unit ?? "Seok"}</b>
+        </div>
+        <div className="kv">
+          <span>درآمد سالانه تقریبی</span>
+          <b>{treasury.annualIncomeApprox?.toLocaleString?.("fa-IR") ?? "—"}</b>
+        </div>
+        {treasury.note && <p style={{ marginTop: 8 }}>{treasury.note}</p>}
+      </Card>
+
+      <Card title="ارتش" icon="⚔️">
+        <div className="bar-track">
+          <div
+            className="bar-fill"
+            style={{ width: `${army.loyaltyPct ?? 0}%` }}
+          />
+        </div>
+        <p>وفاداری: {army.loyaltyPct ?? "—"}٪</p>
+        {army.note && <p style={{ marginTop: 6 }}>{army.note}</p>}
+      </Card>
+
+      <Card title="جناح‌ها و نهادها" icon="🏛">
+        <ul>
+          {factions.nobility && <li>🏛 اشراف: {factions.nobility}</li>}
+          {factions.merchants && <li>💰 تجار: {factions.merchants}</li>}
+          {factions.inspectorate && <li>👁 اداره بازرسی: {factions.inspectorate}</li>}
+          {factions.mice && <li>🐭 موش‌های زیرک: {factions.mice}</li>}
+          {factions.sagesCouncil && <li>🧠 مجلس نخبگان: {factions.sagesCouncil}</li>}
+        </ul>
+      </Card>
+
+      {nationalPact?.articles?.length > 0 && (
+        <Card title="پیمان ملی" icon="📜">
+          <ul>
+            {nationalPact.articles.map((a, i) => (
+              <li key={i}>{a}</li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
+      {openThreads.length > 0 && (
+        <Card title="نخ‌های داستانی باز" icon="🎯">
+          <ul>
+            {openThreads.map((t, i) => (
+              <li key={i}>{t}</li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
+      {publicMood && (
+        <Card title="حس‌وحال مردم" icon="🏙">
+          <p>{publicMood}</p>
+        </Card>
+      )}
+
+      {lastEventSummary && (
+        <Card title="آخرین رویداد" icon="📍">
+          <p>{lastEventSummary}</p>
+        </Card>
+      )}
+
+      <Card title="حلقه مرکزی حکومت" icon="🏛">
+        {coreCircle.map((p, i) => (
+          <div className="roster-item" key={i}>
+            <span className="name">{p.name}</span>
+            <span className="role">{p.title}</span>
+          </div>
+        ))}
+      </Card>
+
+      <Card title="نزدیکان پادشاه" icon="🕯">
+        {personalCircle.map((p, i) => (
+          <div className="roster-item" key={i}>
+            <span className="name">{p.name}</span>
+            <span className="role">{p.title}</span>
+          </div>
+        ))}
+      </Card>
+
+      {councilOfFiveSages.length > 0 && (
+        <Card title="مجلس پنج‌نفره نخبگان" icon="🧠">
+          <p>{councilOfFiveSages.join(" · ")}</p>
+        </Card>
+      )}
+
+      {difficultyLevel && (
+        <Card title="سطح سختی بازی" icon="⚠️">
+          <p>{difficultyLevel}</p>
+        </Card>
+      )}
+    </div>
+  );
+}

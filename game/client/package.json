@@ -1,0 +1,20 @@
+{
+  "name": "joseon-empire-client",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Client for the Joseon Empire simulation — chat with the AI game master plus live status panels.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11"
+  }
+}
