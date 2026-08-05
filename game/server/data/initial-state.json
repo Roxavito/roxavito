@@ -16,22 +16,47 @@
     "loyaltyPct": 80,
     "note": "وفادار اما هنوز کاملاً ایدئولوژیک نشده؛ استان گیونگ‌سانگ‌دو هنوز وفاداری کامل ندارد"
   },
-  "coreCircle": [
-    { "name": "لی هوک", "title": "وزیر اعظم (Yeonguijeong)" },
-    { "name": "بانو سو", "title": "رئیس اداره بازرسی کل (Saheonbu) + سرپرست موش‌های زیرک" },
-    { "name": "ژنرال کانگ سون", "title": "وزیر جنگ (Byeongjo) و فرمانده کل ارتش زمینی" },
-    { "name": "آدمیرال نام‌جونگ", "title": "فرمانده نیروی دریایی (دفاع ساحلی)" },
-    { "name": "هه‌مین", "title": "وزیر مالیه (Hojo)" },
-    { "name": "جین وو", "title": "رئیس دیوان آموزش (Seonggyungwan/Hongmungwan)" }
+  "government": [
+    { "id": "yeonguijeong", "branch": "سه شورای اصلی", "title": "وزیر اعظم (Yeonguijeong)", "holder": "لی هوک", "status": "active", "note": "" },
+    { "id": "left-councillor", "branch": "سه شورای اصلی", "title": "وزیر چپ (Left State Councillor)", "holder": "کیم سئونگ‌گیوم", "status": "active", "note": "" },
+    { "id": "right-councillor", "branch": "سه شورای اصلی", "title": "وزیر راست (Right State Councillor)", "holder": "پارک جین‌ته", "status": "active", "note": "" },
+    { "id": "ijo", "branch": "شش وزارتخانه", "title": "وزیر پرسنل (Ijo)", "holder": "چوی میونگ‌سئوک", "status": "active", "note": "" },
+    { "id": "hojo", "branch": "شش وزارتخانه", "title": "وزیر مالیه (Hojo)", "holder": "هه‌مین", "status": "active", "note": "" },
+    { "id": "yejo", "branch": "شش وزارتخانه", "title": "وزیر آیین‌ها (Yejo)", "holder": "لی گوان‌هو", "status": "active", "note": "" },
+    { "id": "byeongjo", "branch": "شش وزارتخانه", "title": "وزیر جنگ (Byeongjo) و فرمانده کل ارتش زمینی", "holder": "ژنرال کانگ سون", "status": "active", "note": "" },
+    { "id": "hyeongjo", "branch": "شش وزارتخانه", "title": "وزیر دادگستری (Hyeongjo)", "holder": "سئو ناک‌جون", "status": "active", "note": "" },
+    { "id": "gongjo", "branch": "شش وزارتخانه", "title": "وزیر کار و ساخت‌وساز (Gongjo)", "holder": "هان دائه‌ووک", "status": "active", "note": "" },
+    { "id": "seonggyungwan", "branch": "نهادهای نظارتی و فکری", "title": "رئیس دیوان آموزش (Seonggyungwan/Hongmungwan)", "holder": "جین وو", "status": "active", "note": "" },
+    { "id": "saheonbu", "branch": "نهادهای نظارتی و فکری", "title": "رئیس اداره بازرسی کل (Saheonbu)", "holder": "بانو سو", "status": "active", "note": "" },
+    { "id": "seungjeongwon", "branch": "نهادهای نظارتی و فکری", "title": "رئیس دیوان مشورتی سلطنتی (Seungjeongwon)", "holder": "ایم گوانگ‌سیک", "status": "active", "note": "" },
+    { "id": "chunchugwan", "branch": "نهادهای نظارتی و فکری", "title": "رئیس دفتر تاریخ‌نگاری (Chunchugwan)", "holder": "کیم دو‌یون", "status": "active", "note": "" },
+    { "id": "navy", "branch": "نظامی", "title": "فرمانده نیروی دریایی (دفاع ساحلی)", "holder": "آدمیرال نام‌جونگ", "status": "active", "note": "" },
+    { "id": "eagles", "branch": "نهادهای پنهان", "title": "فرمانده عقاب‌های مبارز (نیروی ویژه، زیر نظر مستقیم پادشاه)", "holder": "بک هو‌ریونگ", "status": "active", "note": "" },
+    { "id": "mice", "branch": "نهادهای پنهان", "title": "رئیس موش‌های زیرک (اطلاعات/جاسوسی خیابانی)", "holder": "نامشخص", "status": "active", "note": "زیر نظر مستقیم بانو سو" },
+    { "id": "sage-hanjaeri", "branch": "مجلس پنج‌نفره نخبگان", "title": "عضو مجلس نخبگان — خرد کنفوسیوسی و اخلاق حکومت", "holder": "هان جائه‌ری", "status": "active", "note": "" },
+    { "id": "sage-kimdoyun", "branch": "مجلس پنج‌نفره نخبگان", "title": "عضو مجلس نخبگان — مورخ بزرگ", "holder": "کیم دو‌یون", "status": "active", "note": "هم‌زمان رئیس دفتر تاریخ‌نگاری" },
+    { "id": "sage-parkseongho", "branch": "مجلس پنج‌نفره نخبگان", "title": "عضو مجلس نخبگان — دیوان‌سالاری و اداره‌ی حکومت", "holder": "پارک سئونگ‌هو", "status": "active", "note": "" },
+    { "id": "sage-leemoonjin", "branch": "مجلس پنج‌نفره نخبگان", "title": "عضو مجلس نخبگان — امور مردم و جامعه", "holder": "لی مون‌جین", "status": "active", "note": "" },
+    { "id": "sage-choyungwan", "branch": "مجلس پنج‌نفره نخبگان", "title": "عضو مجلس نخبگان — روابط خارجی و سیاست منطقه‌ای", "holder": "چو یون‌گوان", "status": "active", "note": "" },
+    { "id": "hansu", "branch": "نزدیکان پادشاه", "title": "رئیس دربار — برنامه‌ریزی روزانه، بدون نقش سیاسی", "holder": "هان‌سو", "status": "active", "note": "" },
+    { "id": "chunsu", "branch": "نزدیکان پادشاه", "title": "فرمانده محافظان شخصی پادشاه", "holder": "چون‌سو", "status": "active", "note": "" },
+    { "id": "yangcheol", "branch": "نزدیکان پادشاه", "title": "مشاور ارشد سلطنتی / معلم پادشاه", "holder": "یانگ چئول", "status": "active", "note": "" },
+    { "id": "masterobu", "branch": "نزدیکان پادشاه", "title": "عالم کنفوسیوسی مستقل — منتقد دلسوز، نه عضو دربار", "holder": "استاد اوبو", "status": "active", "note": "" }
   ],
-  "personalCircle": [
-    { "name": "هان‌سو", "title": "رئیس دربار — برنامه‌ریزی روزانه، بدون نقش سیاسی" },
-    { "name": "چون‌سو", "title": "فرمانده محافظان شخصی پادشاه" },
-    { "name": "یانگ چئول", "title": "مشاور ارشد سلطنتی / معلم پادشاه" },
-    { "name": "استاد اوبو", "title": "عالم کنفوسیوسی مستقل — منتقد دلسوز، نه عضو دربار" }
-  ],
-  "councilOfFiveSages": [
-    "هان جائه‌ری", "کیم دو‌یون", "پارک سئونگ‌هو", "لی مون‌جین", "چو یون‌گوان"
+  "rosterLog": [],
+  "schedule": {
+    "day": "سه‌شنبه",
+    "items": [
+      { "time": "صبح زود", "icon": "🌅", "activity": "بیداری و آماده‌سازی برای حضور هفتگی در بازار", "status": "done" },
+      { "time": "صبح", "icon": "🕘", "activity": "صبحانه و مرور گزارش‌های شبانه با هان‌سو", "status": "done" },
+      { "time": "ظهر", "icon": "🕛", "activity": "حضور علنی هفتگی در بازار — سخنرانی و شنیدن شکایات مردم", "status": "done" },
+      { "time": "بعدازظهر", "icon": "🕓", "activity": "بازگشت به قصر؛ دیدار با بانو سو درباره‌ی پرونده‌های فساد/احتکار", "status": "current" },
+      { "time": "غروب", "icon": "🌆", "activity": "زمان آزاد/دیدارهای شخصی — هنوز برنامه‌ریزی نشده", "status": "upcoming" },
+      { "time": "شب", "icon": "🌙", "activity": "استراحت شبانه", "status": "upcoming" }
+    ]
+  },
+  "correspondence": [
+    { "id": "c-1", "from": "بانو سو", "fromTitle": "رئیس اداره بازرسی کل", "subject": "گزارش اولیه‌ی پرونده‌های فساد و احتکار", "status": "pending" }
   ],
   "factions": {
     "nobility": "نگران؛ در حال ارزیابی قدرت شاه؛ دو خاندان در حال اتحاد غیررسمی",

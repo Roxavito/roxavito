@@ -8,6 +8,8 @@ import {
   loadState,
   saveState,
   mergeState,
+  applyRosterEvents,
+  applyCorrespondenceEvents,
   loadHistory,
   saveHistory,
   resetGame,
@@ -56,7 +58,7 @@ app.post("/api/chat", async (req, res) => {
   const history = loadHistory();
 
   try {
-    const { narrative, stateUpdate, usage } = await askGameMaster({
+    const { narrative, stateUpdate, choices, usage } = await askGameMaster({
       currentState,
       history,
       playerMessage,
@@ -69,10 +71,25 @@ app.post("/api/chat", async (req, res) => {
     ];
     saveHistory(newHistory);
 
-    const newState = stateUpdate ? mergeState(currentState, stateUpdate) : currentState;
+    // `government` and `correspondence` are never accepted as raw overwrites
+    // — only the discrete, id-targeted `rosterEvents` / `correspondenceEvents`
+    // can touch them. Anything else the model returned merges normally.
+    let newState = currentState;
+    if (stateUpdate) {
+      const {
+        rosterEvents,
+        correspondenceEvents,
+        government: _ignoredRosterOverwrite,
+        correspondence: _ignoredCorrespondenceOverwrite,
+        ...rest
+      } = stateUpdate;
+      newState = mergeState(currentState, rest);
+      newState = applyRosterEvents(newState, rosterEvents);
+      newState = applyCorrespondenceEvents(newState, correspondenceEvents);
+    }
     saveState(newState);
 
-    res.json({ narrative, state: newState, usage });
+    res.json({ narrative, choices, state: newState, usage });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "خطا در ارتباط با گیم‌مستر. " + err.message });

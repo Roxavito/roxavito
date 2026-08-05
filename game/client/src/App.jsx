@@ -6,6 +6,7 @@ import { fetchState, fetchHistory, sendMessage, resetGame } from "./api.js";
 export default function App() {
   const [state, setState] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [choices, setChoices] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [booting, setBooting] = useState(true);
@@ -28,12 +29,14 @@ export default function App() {
 
   async function handleSend(text) {
     setError(null);
+    setChoices(null);
     setMessages((prev) => [...prev, { role: "user", content: text }]);
     setLoading(true);
     try {
       const res = await sendMessage(text);
       setMessages((prev) => [...prev, { role: "assistant", content: res.narrative }]);
       setState(res.state);
+      setChoices(res.choices || null);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -46,6 +49,7 @@ export default function App() {
     const res = await resetGame();
     setState(res.state);
     setMessages([]);
+    setChoices(null);
     setError(null);
   }
 
@@ -67,6 +71,8 @@ export default function App() {
       <div className="app-body">
         <ChatPanel
           messages={messages}
+          choices={choices}
+          schedule={state?.schedule}
           onSend={handleSend}
           loading={loading}
           error={error}

@@ -18,22 +18,42 @@ function getClient() {
 
 const STATE_OPEN = "<STATE>";
 const STATE_CLOSE = "</STATE>";
+const CHOICES_OPEN = "<CHOICES>";
+const CHOICES_CLOSE = "</CHOICES>";
 
-function splitNarrativeAndState(fullText) {
-  const openIdx = fullText.lastIndexOf(STATE_OPEN);
-  const closeIdx = fullText.lastIndexOf(STATE_CLOSE);
+// Extracts a `<TAG>...json...</TAG>` block, returning the parsed JSON and the
+// text with that block (and everything after its opening tag) removed.
+function extractBlock(text, openTag, closeTag) {
+  const openIdx = text.lastIndexOf(openTag);
+  const closeIdx = text.lastIndexOf(closeTag);
   if (openIdx === -1 || closeIdx === -1 || closeIdx < openIdx) {
-    return { narrative: fullText.trim(), stateUpdate: null };
+    return { rest: text, data: null };
   }
-  const narrative = fullText.slice(0, openIdx).trim();
-  const jsonText = fullText.slice(openIdx + STATE_OPEN.length, closeIdx).trim();
-  let stateUpdate = null;
+  const jsonText = text.slice(openIdx + openTag.length, closeIdx).trim();
+  let data = null;
   try {
-    stateUpdate = JSON.parse(jsonText);
+    data = JSON.parse(jsonText);
   } catch (err) {
-    console.error("Failed to parse <STATE> block:", err.message);
+    console.error(`Failed to parse ${openTag} block:`, err.message);
   }
-  return { narrative, stateUpdate };
+  return { rest: text.slice(0, openIdx), data };
+}
+
+function splitResponse(fullText) {
+  // <STATE> is always the final block the model writes, so strip it first.
+  const { rest: withoutState, data: stateUpdate } = extractBlock(
+    fullText,
+    STATE_OPEN,
+    STATE_CLOSE
+  );
+  // <CHOICES>, when present, comes right before <STATE>.
+  const { rest: narrativeRaw, data: choicesData } = extractBlock(
+    withoutState,
+    CHOICES_OPEN,
+    CHOICES_CLOSE
+  );
+  const choices = Array.isArray(choicesData) ? choicesData : null;
+  return { narrative: narrativeRaw.trim(), stateUpdate, choices };
 }
 
 export async function askGameMaster({ currentState, history, playerMessage }) {
@@ -54,7 +74,7 @@ export async function askGameMaster({ currentState, history, playerMessage }) {
 
   const fullText = response.choices?.[0]?.message?.content || "";
 
-  const { narrative, stateUpdate } = splitNarrativeAndState(fullText);
+  const { narrative, stateUpdate, choices } = splitResponse(fullText);
 
-  return { narrative, stateUpdate, rawText: fullText, usage: response.usage };
+  return { narrative, stateUpdate, choices, rawText: fullText, usage: response.usage };
 }

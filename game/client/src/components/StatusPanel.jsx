@@ -1,3 +1,5 @@
+import GovernmentPanel from "./GovernmentPanel.jsx";
+
 function Card({ title, icon, children }) {
   return (
     <div className="card">
@@ -21,12 +23,14 @@ export default function StatusPanel({ state }) {
     openThreads = [],
     publicMood,
     lastEventSummary,
-    coreCircle = [],
-    personalCircle = [],
-    councilOfFiveSages = [],
+    government = [],
+    rosterLog = [],
+    correspondence = [],
     nationalPact,
     difficultyLevel,
   } = state;
+
+  const pendingMail = correspondence.filter((l) => l.status !== "archived");
 
   return (
     <div className="status-panel">
@@ -79,6 +83,31 @@ export default function StatusPanel({ state }) {
         </ul>
       </Card>
 
+      {pendingMail.length > 0 && (
+        <Card title="نامه‌ها و گزارش‌ها" icon="✉️">
+          {pendingMail.map((letter) => (
+            <div className="roster-item" key={letter.id}>
+              <span className="name">
+                {letter.from}
+                <span className={`mail-badge mail-${letter.status}`}>
+                  {letter.status === "pending"
+                    ? "منتظر ارائه"
+                    : letter.status === "delivered"
+                    ? "تحویل شده"
+                    : letter.status === "read"
+                    ? "خوانده شده"
+                    : letter.status}
+                </span>
+              </span>
+              <span className="role">
+                {letter.fromTitle ? `${letter.fromTitle} — ` : ""}
+                {letter.subject}
+              </span>
+            </div>
+          ))}
+        </Card>
+      )}
+
       {nationalPact?.articles?.length > 0 && (
         <Card title="پیمان ملی" icon="📜">
           <ul>
@@ -111,29 +140,7 @@ export default function StatusPanel({ state }) {
         </Card>
       )}
 
-      <Card title="حلقه مرکزی حکومت" icon="🏛">
-        {coreCircle.map((p, i) => (
-          <div className="roster-item" key={i}>
-            <span className="name">{p.name}</span>
-            <span className="role">{p.title}</span>
-          </div>
-        ))}
-      </Card>
-
-      <Card title="نزدیکان پادشاه" icon="🕯">
-        {personalCircle.map((p, i) => (
-          <div className="roster-item" key={i}>
-            <span className="name">{p.name}</span>
-            <span className="role">{p.title}</span>
-          </div>
-        ))}
-      </Card>
-
-      {councilOfFiveSages.length > 0 && (
-        <Card title="مجلس پنج‌نفره نخبگان" icon="🧠">
-          <p>{councilOfFiveSages.join(" · ")}</p>
-        </Card>
-      )}
+      <GovernmentPanel government={government} rosterLog={rosterLog} />
 
       {difficultyLevel && (
         <Card title="سطح سختی بازی" icon="⚠️">

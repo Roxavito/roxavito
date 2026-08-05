@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import DayTimeline from "./DayTimeline.jsx";
 
-export default function ChatPanel({ messages, onSend, loading, error }) {
+export default function ChatPanel({ messages, choices, schedule, onSend, loading, error }) {
   const [draft, setDraft] = useState("");
   const scrollRef = useRef(null);
 
@@ -8,7 +9,7 @@ export default function ChatPanel({ messages, onSend, loading, error }) {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, loading]);
+  }, [messages, loading, choices]);
 
   function submit(e) {
     e.preventDefault();
@@ -26,6 +27,7 @@ export default function ChatPanel({ messages, onSend, loading, error }) {
 
   return (
     <div className="chat-panel">
+      <DayTimeline schedule={schedule} />
       <div className="chat-scroll" ref={scrollRef}>
         {messages.length === 0 && !loading && (
           <div className="msg msg-gm">
@@ -44,9 +46,28 @@ export default function ChatPanel({ messages, onSend, loading, error }) {
         ))}
         {loading && <div className="msg msg-loading">هان‌سو در حال آماده‌سازی گزارش است...</div>}
         {error && <div className="msg msg-error">{error}</div>}
+
+        {!loading && choices && choices.length > 0 && (
+          <div className="choices-box">
+            {choices.map((c, i) => (
+              <button
+                key={i}
+                type="button"
+                className="choice-btn"
+                onClick={() => onSend(c.label)}
+              >
+                <span className="choice-label">{c.label}</span>
+                {c.impact && <span className="choice-impact">{c.impact}</span>}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       <div className="director-hint">
         نکته: متنی که داخل پرانتز «(...)» بنویسی خطاب به کارگردان بازیه، نه دیالوگ داخل داستان.
+        {choices && choices.length > 0 && !loading
+          ? " می‌تونی یکی از گزینه‌های بالا رو انتخاب کنی یا تصمیم خودت رو تایپ کنی."
+          : ""}
       </div>
       <form className="chat-form" onSubmit={submit}>
         <textarea
