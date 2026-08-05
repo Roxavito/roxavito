@@ -44,6 +44,12 @@ export default function App() {
     }
   }
 
+  function handleRequestTaskReport(task) {
+    handleSend(
+      `از ${task.assigneeName} بخواه گزارش پیشرفت وظیفه‌ی «${task.title}» رو با جزئیات کامل بده.`
+    );
+  }
+
   async function handleReset() {
     if (!confirm("بازی از اول شروع بشه و کل تاریخچه پاک بشه؟")) return;
     const res = await resetGame();
@@ -77,7 +83,7 @@ export default function App() {
           loading={loading}
           error={error}
         />
-        <StatusPanel state={state} />
+        <StatusPanel state={state} onRequestTaskReport={handleRequestTaskReport} />
       </div>
     </>
   );

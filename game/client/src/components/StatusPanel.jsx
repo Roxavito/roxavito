@@ -1,4 +1,5 @@
 import GovernmentPanel from "./GovernmentPanel.jsx";
+import TaskPanel from "./TaskPanel.jsx";
 
 function Card({ title, icon, children }) {
   return (
@@ -12,7 +13,7 @@ function Card({ title, icon, children }) {
   );
 }
 
-export default function StatusPanel({ state }) {
+export default function StatusPanel({ state, onRequestTaskReport }) {
   if (!state) return null;
 
   const {
@@ -26,6 +27,7 @@ export default function StatusPanel({ state }) {
     government = [],
     rosterLog = [],
     correspondence = [],
+    tasks = [],
     nationalPact,
     difficultyLevel,
   } = state;
@@ -107,6 +109,8 @@ export default function StatusPanel({ state }) {
           ))}
         </Card>
       )}
+
+      <TaskPanel tasks={tasks} onRequestReport={onRequestTaskReport} />
 
       {nationalPact?.articles?.length > 0 && (
         <Card title="پیمان ملی" icon="📜">

@@ -428,6 +428,66 @@ body {
   font-weight: 600;
 }
 
+.task-item {
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--card-border);
+}
+
+.task-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.task-title {
+  font-size: 0.85rem;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.task-meta {
+  font-size: 0.74rem;
+  color: var(--ink-faint);
+  margin-bottom: 6px;
+}
+
+.task-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.task-status {
+  font-size: 0.74rem;
+  color: var(--ink-dim);
+}
+
+.task-report-btn {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold-bright);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.7rem;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.task-report-btn:hover {
+  background: rgba(201, 162, 75, 0.15);
+}
+
+.task-lastupdate {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  margin-top: 4px;
+  font-style: italic;
+}
+
 .mail-badge {
   display: inline-block;
   margin-inline-start: 6px;

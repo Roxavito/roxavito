@@ -10,6 +10,7 @@ import {
   mergeState,
   applyRosterEvents,
   applyCorrespondenceEvents,
+  applyTaskEvents,
   loadHistory,
   saveHistory,
   resetGame,
@@ -71,21 +72,25 @@ app.post("/api/chat", async (req, res) => {
     ];
     saveHistory(newHistory);
 
-    // `government` and `correspondence` are never accepted as raw overwrites
-    // — only the discrete, id-targeted `rosterEvents` / `correspondenceEvents`
-    // can touch them. Anything else the model returned merges normally.
+    // `government`, `correspondence` and `tasks` are never accepted as raw
+    // overwrites — only the discrete, id-targeted `rosterEvents` /
+    // `correspondenceEvents` / `taskEvents` can touch them. Anything else
+    // the model returned merges normally.
     let newState = currentState;
     if (stateUpdate) {
       const {
         rosterEvents,
         correspondenceEvents,
+        taskEvents,
         government: _ignoredRosterOverwrite,
         correspondence: _ignoredCorrespondenceOverwrite,
+        tasks: _ignoredTasksOverwrite,
         ...rest
       } = stateUpdate;
       newState = mergeState(currentState, rest);
       newState = applyRosterEvents(newState, rosterEvents);
       newState = applyCorrespondenceEvents(newState, correspondenceEvents);
+      newState = applyTaskEvents(newState, taskEvents);
     }
     saveState(newState);
 

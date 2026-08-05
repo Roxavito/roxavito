@@ -130,6 +130,62 @@ export function applyCorrespondenceEvents(state, events) {
   };
 }
 
+// Same guardrail pattern again: tasks are never a raw overwrite of `tasks`
+// (a long-running task the model doesn't re-mention this turn must not
+// vanish). The model reports discrete `taskEvents` — "new" creates a task,
+// "update" advances an existing one's progress/status by id.
+export function applyTaskEvents(state, events) {
+  if (!Array.isArray(events) || events.length === 0) return state;
+
+  let tasks = (state.tasks || []).map((t) => ({ ...t }));
+
+  for (const event of events) {
+    if (!event || typeof event !== "object") continue;
+    const {
+      action,
+      id,
+      title,
+      assigneeId,
+      assigneeName,
+      estimatedDuration,
+      progressPct,
+      status,
+      lastUpdate,
+    } = event;
+
+    if (action === "update" && id) {
+      tasks = tasks.map((t) =>
+        t.id === id
+          ? {
+              ...t,
+              ...(typeof progressPct === "number" ? { progressPct } : {}),
+              ...(status ? { status } : {}),
+              ...(lastUpdate ? { lastUpdate } : {}),
+            }
+          : t
+      );
+    } else {
+      tasks.unshift({
+        id: id || `task-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        title: title || "وظیفه‌ی نامشخص",
+        assigneeId: assigneeId || null,
+        assigneeName: assigneeName || "نامشخص",
+        assignedDay: state.meta?.day,
+        assignedRegnalYear: state.meta?.regnalYear,
+        estimatedDuration: estimatedDuration || "نامشخص",
+        progressPct: typeof progressPct === "number" ? progressPct : 0,
+        status: status || "in_progress",
+        lastUpdate: lastUpdate || "تازه واگذار شد",
+      });
+    }
+  }
+
+  return {
+    ...state,
+    tasks: tasks.slice(0, 40),
+  };
+}
+
 export function loadHistory() {
   return readJson(HISTORY_PATH, []);
 }
