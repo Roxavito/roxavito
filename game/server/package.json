@@ -3,15 +3,15 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Game-master backend for the Joseon Empire simulation — calls Claude to narrate turns and tracks game state.",
+  "description": "Game-master backend for the Joseon Empire simulation — calls OpenAI to narrate turns and tracks game state.",
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.68.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "openai": "^4.104.0"
   }
 }

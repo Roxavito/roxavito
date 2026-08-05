@@ -53,18 +53,15 @@ const OPERATING_RULES = `
 اکنون سند مرجع کامل بازی:
 `;
 
+// Two separate strings on purpose: the first (rules + game bible) is large and
+// completely stable across turns, the second is the live game state that
+// changes every turn. Keeping them apart lets a provider-specific caller
+// decide how to send them (e.g. Anthropic's prompt-cache breakpoints), while
+// providers with no such concept (e.g. OpenAI) can just join them as-is.
 export function buildSystemBlocks(currentState) {
   return [
-    {
-      type: "text",
-      text: OPERATING_RULES + "\n\n" + gameBible,
-      cache_control: { type: "ephemeral" },
-    },
-    {
-      type: "text",
-      text:
-        "وضعیت زنده‌ی فعلی بازی (منبع حقیقت — این را در بلوک <STATE> پاسخت به‌عنوان مبنا در نظر بگیر):\n" +
-        JSON.stringify(currentState, null, 2),
-    },
+    OPERATING_RULES + "\n\n" + gameBible,
+    "وضعیت زنده‌ی فعلی بازی (منبع حقیقت — این را در بلوک <STATE> پاسخت به‌عنوان مبنا در نظر بگیر):\n" +
+      JSON.stringify(currentState, null, 2),
   ];
 }

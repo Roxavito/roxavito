@@ -1,10 +1,10 @@
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import { buildSystemBlocks } from "./systemPrompt.js";
 
-const MODEL = process.env.CLAUDE_MODEL || "claude-sonnet-5";
-const MAX_TOKENS = Number(process.env.CLAUDE_MAX_TOKENS || 4096);
+const MODEL = process.env.OPENAI_MODEL || "gpt-4o";
+const MAX_TOKENS = Number(process.env.OPENAI_MAX_TOKENS || 4096);
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const STATE_OPEN = "<STATE>";
 const STATE_CLOSE = "</STATE>";
@@ -27,22 +27,22 @@ function splitNarrativeAndState(fullText) {
 }
 
 export async function askGameMaster({ currentState, history, playerMessage }) {
-  const system = buildSystemBlocks(currentState);
+  const [stableSystem, stateSystem] = buildSystemBlocks(currentState);
 
   const messages = [
+    { role: "system", content: stableSystem },
+    { role: "system", content: stateSystem },
     ...history,
     { role: "user", content: playerMessage },
   ];
 
-  const response = await client.messages.create({
+  const response = await client.chat.completions.create({
     model: MODEL,
     max_tokens: MAX_TOKENS,
-    system,
     messages,
   });
 
-  const textBlock = response.content.find((b) => b.type === "text");
-  const fullText = textBlock ? textBlock.text : "";
+  const fullText = response.choices?.[0]?.message?.content || "";
 
   const { narrative, stateUpdate } = splitNarrativeAndState(fullText);
 
