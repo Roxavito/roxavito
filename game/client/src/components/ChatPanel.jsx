@@ -36,12 +36,27 @@ export default function ChatPanel({ messages, choices, schedule, onSend, loading
             آماده کرده و منتظر دستور شماست. فرمان می‌فرمایید؟
           </div>
         )}
-        {messages.map((m, i) => (
+        {messages.map((m) => (
           <div
-            key={i}
+            key={m.id}
             className={`msg ${m.role === "user" ? "msg-user" : "msg-gm"}`}
           >
             {m.content}
+            {m.image && (
+              <a
+                href={m.image.pageUrl || m.image.url}
+                target="_blank"
+                rel="noreferrer"
+                className="msg-image-link"
+              >
+                <img
+                  className="msg-image"
+                  src={m.image.url}
+                  alt={m.image.title || ""}
+                  loading="lazy"
+                />
+              </a>
+            )}
           </div>
         ))}
         {loading && <div className="msg msg-loading">هان‌سو در حال آماده‌سازی گزارش است...</div>}

@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import ChatPanel from "./components/ChatPanel.jsx";
 import StatusPanel from "./components/StatusPanel.jsx";
-import { fetchState, fetchHistory, sendMessage, resetGame } from "./api.js";
+import { fetchState, fetchHistory, sendMessage, resetGame, fetchSceneImage } from "./api.js";
+
+function newId() {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
 
 export default function App() {
   const [state, setState] = useState(null);
@@ -16,7 +20,7 @@ export default function App() {
       try {
         const [s, h] = await Promise.all([fetchState(), fetchHistory()]);
         setState(s.state);
-        setMessages(h.history);
+        setMessages((h.history || []).map((m) => ({ ...m, id: newId() })));
       } catch (err) {
         setError(
           "اتصال به سرور برقرار نشد. مطمئن شو سرور بازی (game/server) در حال اجراست."
@@ -27,16 +31,35 @@ export default function App() {
     })();
   }, []);
 
+  // Attaches an image to the message once the (non-blocking) search resolves
+  // — whether that's before or after the player has already sent their next
+  // message. If the message is gone (e.g. the game was reset meanwhile),
+  // this quietly does nothing.
+  function attachImageWhenReady(messageId, query) {
+    if (!query) return;
+    fetchSceneImage(query).then((image) => {
+      if (!image) return;
+      setMessages((prev) =>
+        prev.map((m) => (m.id === messageId ? { ...m, image } : m))
+      );
+    });
+  }
+
   async function handleSend(text) {
     setError(null);
     setChoices(null);
-    setMessages((prev) => [...prev, { role: "user", content: text }]);
+    setMessages((prev) => [...prev, { id: newId(), role: "user", content: text }]);
     setLoading(true);
     try {
       const res = await sendMessage(text);
-      setMessages((prev) => [...prev, { role: "assistant", content: res.narrative }]);
+      const assistantId = newId();
+      setMessages((prev) => [
+        ...prev,
+        { id: assistantId, role: "assistant", content: res.narrative },
+      ]);
       setState(res.state);
       setChoices(res.choices || null);
+      attachImageWhenReady(assistantId, res.imageQuery);
     } catch (err) {
       setError(err.message);
     } finally {

@@ -31,3 +31,17 @@ export async function resetGame() {
   const res = await fetch(`${BASE}/reset`, { method: "POST" });
   return handle(res);
 }
+
+// Fire-and-forget from the caller's point of view: resolves whenever the
+// image search finishes (before or after the player's next message), never
+// throws, and resolves to `null` on any failure or no-match.
+export async function fetchSceneImage(query) {
+  try {
+    const res = await fetch(`${BASE}/image?q=${encodeURIComponent(query)}`);
+    if (!res.ok) return null;
+    const body = await res.json();
+    return body.image || null;
+  } catch {
+    return null;
+  }
+}
