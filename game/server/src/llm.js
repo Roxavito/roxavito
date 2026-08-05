@@ -4,7 +4,17 @@ import { buildSystemBlocks } from "./systemPrompt.js";
 const MODEL = process.env.OPENAI_MODEL || "gpt-4o";
 const MAX_TOKENS = Number(process.env.OPENAI_MAX_TOKENS || 4096);
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Created lazily (not at import time) so the server can still boot — and
+// serve the static frontend / respond to /api/state — even before an
+// OPENAI_API_KEY is configured (e.g. the first moments after a hosted
+// deploy, before the env var is set).
+let client = null;
+function getClient() {
+  if (!client) {
+    client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+  return client;
+}
 
 const STATE_OPEN = "<STATE>";
 const STATE_CLOSE = "</STATE>";
@@ -36,7 +46,7 @@ export async function askGameMaster({ currentState, history, playerMessage }) {
     { role: "user", content: playerMessage },
   ];
 
-  const response = await client.chat.completions.create({
+  const response = await getClient().chat.completions.create({
     model: MODEL,
     max_tokens: MAX_TOKENS,
     messages,
