@@ -13,13 +13,20 @@ const COMMONS_API = "https://commons.wikimedia.org/w/api.php";
 const USER_AGENT =
   "JoseonEmpireGame/1.0 (https://github.com/Roxavito/roxavito; personal non-commercial hobby project)";
 
-async function runSearch(query) {
+// A generic full-text Commons search on a query like "investigation report
+// documents" happily matches any random scanned-paper or clip-art file with
+// no connection to Korea at all — Commons is a huge general media library,
+// not a curated Joseon-art collection. A candidate is only trusted once it
+// actually looks Korean/Joseon in its own title.
+const RELEVANCE_KEYWORDS = /korea|korean|joseon|choson|chosun|seoul|hanbok|goryeo|silla/i;
+
+async function runSearch(query, { requireRelevance = false } = {}) {
   const url = new URL(COMMONS_API);
   url.searchParams.set("action", "query");
   url.searchParams.set("generator", "search");
   url.searchParams.set("gsrsearch", query);
   url.searchParams.set("gsrnamespace", "6"); // File namespace
-  url.searchParams.set("gsrlimit", "5");
+  url.searchParams.set("gsrlimit", "8");
   url.searchParams.set("prop", "imageinfo");
   url.searchParams.set("iiprop", "url|extmetadata");
   url.searchParams.set("iiurlwidth", "600");
@@ -69,15 +76,14 @@ async function runSearch(query) {
   for (const page of rankedPages) {
     const info = page?.imageinfo?.[0];
     const thumb = info?.thumburl;
-    if (thumb) {
-      return {
-        url: thumb,
-        pageUrl: info.descriptionurl || null,
-        title: page.title?.replace(/^File:/, "") || query,
-      };
-    }
+    if (!thumb) continue;
+    const title = page.title?.replace(/^File:/, "") || query;
+    if (requireRelevance && !RELEVANCE_KEYWORDS.test(title)) continue;
+    return { url: thumb, pageUrl: info.descriptionurl || null, title };
   }
-  console.log(`Wikimedia Commons: ${rankedPages.length} page(s) matched "${query}" but none had a usable thumbnail`);
+  console.log(
+    `Wikimedia Commons: ${rankedPages.length} page(s) matched "${query}" but none had a usable/relevant thumbnail`
+  );
   return null;
 }
 
@@ -86,14 +92,29 @@ export async function searchSceneImage(query) {
   if (!trimmed) return null;
 
   try {
-    // Try the tighter, bitmap-only search first (paintings/photos, not
-    // vector drawings). If that genuinely finds nothing — a real
-    // possibility for a very specific or obscure query — retry once with
-    // the plain query before giving up, instead of the scene silently
-    // never getting an image over something as narrow as a filetype filter.
-    const strict = await runSearch(`${trimmed} filetype:bitmap`);
+    // Tier 1: scoped to Commons' own "Joseon Dynasty" category — the most
+    // reliable way to keep results genuinely Korean/historical, since
+    // Commons categorizes its Korean-heritage uploads reasonably well. No
+    // extra relevance check needed here — category membership already is
+    // the relevance signal.
+    const categorized = await runSearch(`${trimmed} incategory:"Joseon Dynasty"`);
+    if (categorized) return categorized;
+
+    // Tier 2: broader bitmap search with Korea/Joseon terms baked into the
+    // query itself (regardless of exactly how the model phrased its own
+    // query), but every candidate must still show a Korea/Joseon word in
+    // its own title — otherwise an unrelated file that merely matched a
+    // couple of keywords (e.g. a random scanned document for an
+    // "investigation report" scene) could get picked, which is exactly
+    // what was happening before this fix.
+    const strict = await runSearch(`${trimmed} Korean Joseon filetype:bitmap`, {
+      requireRelevance: true,
+    });
     if (strict) return strict;
-    return await runSearch(trimmed);
+
+    // Tier 3: last resort, same relevance filter still applied — better to
+    // show no image than a confidently wrong one.
+    return await runSearch(`${trimmed} Korean Joseon`, { requireRelevance: true });
   } catch (err) {
     console.error("Scene image search failed:", err.message);
     return null;
