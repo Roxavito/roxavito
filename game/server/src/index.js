@@ -111,6 +111,15 @@ app.post("/api/chat", async (req, res) => {
     // Independent writes, same reasoning as the reads above.
     await Promise.all([saveHistory(newHistory), saveState(newState)]);
 
+    // Scene images were reported as "never once shown" with zero trace in
+    // the logs of the image search itself ever running — meaning the model
+    // simply wasn't including `imageQuery` in its STATE block at all. This
+    // makes that directly observable in Render's logs going forward,
+    // instead of having to infer it indirectly from silence.
+    console.log(
+      imageQuery ? `[imageQuery] model requested: "${imageQuery}"` : "[imageQuery] not included this turn"
+    );
+
     res.json({ narrative, choices, imageQuery, state: newState, usage });
   } catch (err) {
     console.error(err);
