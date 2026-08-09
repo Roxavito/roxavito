@@ -36,9 +36,9 @@ export default function App() {
   // — whether that's before or after the player has already sent their next
   // message. If the message is gone (e.g. the game was reset meanwhile),
   // this quietly does nothing.
-  function attachImageWhenReady(messageId, query) {
-    if (!query) return;
-    fetchSceneImage(query).then((image) => {
+  function attachImageWhenReady(messageId, imageCategory) {
+    if (!imageCategory) return;
+    fetchSceneImage(imageCategory).then((image) => {
       if (!image) return;
       setMessages((prev) =>
         prev.map((m) => (m.id === messageId ? { ...m, image } : m))
@@ -60,7 +60,7 @@ export default function App() {
       ]);
       setState(res.state);
       setChoices(res.choices || null);
-      attachImageWhenReady(assistantId, res.imageQuery);
+      attachImageWhenReady(assistantId, res.imageCategory);
     } catch (err) {
       setError(err.message);
     } finally {

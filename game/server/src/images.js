@@ -1,34 +1,60 @@
-// Finds a free-license, thematically-fitting image for the current scene by
-// searching Wikimedia Commons (paintings, illustrations, film stills, etc.)
-// — no API key, no LLM tokens spent on the actual search. The model only
-// contributes a short English search-query hint (`imageQuery`); everything
-// else here is a plain HTTP call.
+// Finds a real, freely-licensed image for the current scene on Wikimedia
+// Commons — no API key, no LLM tokens spent on the search itself. This used
+// to run a live full-text search built from a free-text hint the model
+// wrote itself, which repeatedly turned up thematically unrelated files
+// (Commons is a huge general media library, and a query like "investigation
+// report documents" happily matches any random scanned-document photo with
+// no connection to Korea at all).
+//
+// Instead, the model now picks one of a small fixed set of scene categories
+// (see systemPrompt.js's `imageCategory` field), and each one maps here to
+// real, hand-verified, well-populated Wikimedia Commons categories — found
+// via research, not guessed — so every search is scoped to genuinely
+// Joseon-era Korean material from the start, regardless of how the current
+// scene happens to be phrased.
 const COMMONS_API = "https://commons.wikimedia.org/w/api.php";
 
-// Wikimedia's User-Agent policy (meta.wikimedia.org/wiki/User-Agent_policy)
-// asks for a descriptive UA with real contact info; requests missing that
-// are the ones most likely to get rate-limited or flat-out 403'd,
-// especially from cloud-hosting IP ranges like Render's. A bare
-// "AppName/1.0 (personal project)" string doesn't satisfy that.
 const USER_AGENT =
   "JoseonEmpireGame/1.0 (https://github.com/Roxavito/roxavito; personal non-commercial hobby project)";
 
-// A generic full-text Commons search on a query like "investigation report
-// documents" happily matches any random scanned-paper or clip-art file with
-// no connection to Korea at all — Commons is a huge general media library,
-// not a curated Joseon-art collection. A candidate is only trusted once it
-// actually looks Korean/Joseon in its own title.
-const RELEVANCE_KEYWORDS = /korea|korean|joseon|choson|chosun|seoul|hanbok|goryeo|silla/i;
+// Each entry is an ordered list of real Commons categories to try in turn
+// (first match wins). Verified to exist and be populated via research:
+// - Irworobongdo: the iconic "Sun, Moon and Five Peaks" screen behind every
+//   Joseon throne — reliably throne-hall imagery.
+// - Gyeongbokgung / Changdeokgung / Architecture of the Joseon Dynasty:
+//   the actual royal palaces.
+// - Generals of the Joseon Dynasty (under People of the Joseon Dynasty).
+// - Shin Yun-bok: the Joseon genre painter best known for scenes of
+//   everyday/market life; "Joseon Dynasty" itself also holds market-life
+//   files (e.g. "Old korea market.jpg", "Peddler merchants of Joseon
+//   Dynasty").
+// - Uigwe: the ~3,895-volume illustrated record of Joseon royal rituals
+//   and ceremonies.
+// - Kings of Joseon / People of the Joseon Dynasty: portraiture.
+// - Paintings of the Joseon Dynasty / Art of the Joseon Dynasty: general
+//   court/indoor scenes that don't fit a narrower bucket.
+// - Ilseongnok ("daily record" of the Joseon court) / Munjado: documents,
+//   letters, calligraphy.
+const CATEGORY_MAP = {
+  throne_hall: ["Irworobongdo", "Gyeongbokgung"],
+  military: ["Generals of the Joseon Dynasty", "Joseon Dynasty"],
+  market: ["Shin Yun-bok", "Joseon Dynasty"],
+  ceremony: ["Uigwe"],
+  portrait: ["Kings of Joseon", "People of the Joseon Dynasty"],
+  palace: ["Gyeongbokgung", "Architecture of the Joseon Dynasty", "Changdeokgung"],
+  private_meeting: ["Paintings of the Joseon Dynasty", "Art of the Joseon Dynasty"],
+  document: ["Ilseongnok", "Munjado"],
+};
 
-async function runSearch(query, { requireRelevance = false } = {}) {
+async function fetchCategoryImages(commonsCategory) {
   const url = new URL(COMMONS_API);
   url.searchParams.set("action", "query");
-  url.searchParams.set("generator", "search");
-  url.searchParams.set("gsrsearch", query);
-  url.searchParams.set("gsrnamespace", "6"); // File namespace
-  url.searchParams.set("gsrlimit", "8");
+  url.searchParams.set("generator", "categorymembers");
+  url.searchParams.set("gcmtitle", `Category:${commonsCategory}`);
+  url.searchParams.set("gcmtype", "file");
+  url.searchParams.set("gcmlimit", "30");
   url.searchParams.set("prop", "imageinfo");
-  url.searchParams.set("iiprop", "url|extmetadata");
+  url.searchParams.set("iiprop", "url");
   url.searchParams.set("iiurlwidth", "600");
   url.searchParams.set("format", "json");
   url.searchParams.set("origin", "*");
@@ -39,82 +65,52 @@ async function runSearch(query, { requireRelevance = false } = {}) {
   });
 
   if (!res.ok) {
-    // This used to fail completely silently (just `return null`), which is
-    // exactly why "the image feature has never once worked" was impossible
-    // to diagnose from Render's logs — there was nothing to look at. Now a
-    // real failure (rate limit, User-Agent rejection, etc.) at least leaves
-    // a trace with the actual status/body.
     const bodySnippet = await res.text().catch(() => "");
     console.warn(
-      `Wikimedia Commons search failed (${res.status}) for "${query}":`,
+      `Wikimedia Commons category fetch failed (${res.status}) for "${commonsCategory}":`,
       bodySnippet.slice(0, 300)
     );
-    return null;
+    return [];
   }
 
   const data = await res.json();
   const pages = data?.query?.pages;
   if (!pages) {
-    // A 200 OK with zero matching pages is a completely valid, common
-    // outcome (the query just didn't match anything on Commons) — but it
-    // used to be indistinguishable in the logs from "this code path never
-    // ran at all". Logging it turns "no image ever shows up" from a
-    // guessing game into something diagnosable from Render's logs.
-    console.log(`Wikimedia Commons: 0 results for "${query}"`);
+    console.log(`Wikimedia Commons: category "${commonsCategory}" returned no members`);
+    return [];
+  }
+
+  return Object.values(pages)
+    .map((page) => {
+      const info = page?.imageinfo?.[0];
+      if (!info?.thumburl) return null;
+      return {
+        url: info.thumburl,
+        pageUrl: info.descriptionurl || null,
+        title: page.title?.replace(/^File:/, "") || commonsCategory,
+      };
+    })
+    .filter(Boolean);
+}
+
+export async function searchSceneImage(category) {
+  const key = String(category || "").trim().toLowerCase();
+  const commonsCategories = CATEGORY_MAP[key];
+  if (!commonsCategories) {
+    if (key) console.log(`[imageCategory] "${key}" is not a recognized category, skipping`);
     return null;
   }
 
-  // `pages` is a plain object keyed by numeric page ID. JS engines always
-  // iterate integer-like object keys in ascending numeric order, NOT in
-  // the search-relevance order MediaWiki actually returned them in — so
-  // without re-sorting by the API's own `index` field, the "first" result
-  // picked below is essentially arbitrary rather than the best match.
-  const rankedPages = Object.values(pages).sort(
-    (a, b) => (a?.index ?? 0) - (b?.index ?? 0)
-  );
-
-  for (const page of rankedPages) {
-    const info = page?.imageinfo?.[0];
-    const thumb = info?.thumburl;
-    if (!thumb) continue;
-    const title = page.title?.replace(/^File:/, "") || query;
-    if (requireRelevance && !RELEVANCE_KEYWORDS.test(title)) continue;
-    return { url: thumb, pageUrl: info.descriptionurl || null, title };
-  }
-  console.log(
-    `Wikimedia Commons: ${rankedPages.length} page(s) matched "${query}" but none had a usable/relevant thumbnail`
-  );
-  return null;
-}
-
-export async function searchSceneImage(query) {
-  const trimmed = String(query || "").trim();
-  if (!trimmed) return null;
-
   try {
-    // Tier 1: scoped to Commons' own "Joseon Dynasty" category — the most
-    // reliable way to keep results genuinely Korean/historical, since
-    // Commons categorizes its Korean-heritage uploads reasonably well. No
-    // extra relevance check needed here — category membership already is
-    // the relevance signal.
-    const categorized = await runSearch(`${trimmed} incategory:"Joseon Dynasty"`);
-    if (categorized) return categorized;
-
-    // Tier 2: broader bitmap search with Korea/Joseon terms baked into the
-    // query itself (regardless of exactly how the model phrased its own
-    // query), but every candidate must still show a Korea/Joseon word in
-    // its own title — otherwise an unrelated file that merely matched a
-    // couple of keywords (e.g. a random scanned document for an
-    // "investigation report" scene) could get picked, which is exactly
-    // what was happening before this fix.
-    const strict = await runSearch(`${trimmed} Korean Joseon filetype:bitmap`, {
-      requireRelevance: true,
-    });
-    if (strict) return strict;
-
-    // Tier 3: last resort, same relevance filter still applied — better to
-    // show no image than a confidently wrong one.
-    return await runSearch(`${trimmed} Korean Joseon`, { requireRelevance: true });
+    for (const commonsCategory of commonsCategories) {
+      const candidates = await fetchCategoryImages(commonsCategory);
+      if (candidates.length === 0) continue;
+      // Random pick within the category, so repeated uses of the same
+      // scene category (e.g. several "market" scenes across a session)
+      // don't always show the exact same picture.
+      return candidates[Math.floor(Math.random() * candidates.length)];
+    }
+    return null;
   } catch (err) {
     console.error("Scene image search failed:", err.message);
     return null;

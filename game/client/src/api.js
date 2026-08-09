@@ -34,10 +34,12 @@ export async function resetGame() {
 
 // Fire-and-forget from the caller's point of view: resolves whenever the
 // image search finishes (before or after the player's next message), never
-// throws, and resolves to `null` on any failure or no-match.
-export async function fetchSceneImage(query) {
+// throws, and resolves to `null` on any failure or no-match. `category` is
+// one of the fixed scene-category keys the game master picks (see
+// systemPrompt.js's imageCategory field), not free text.
+export async function fetchSceneImage(category) {
   try {
-    const res = await fetch(`${BASE}/image?q=${encodeURIComponent(query)}`);
+    const res = await fetch(`${BASE}/image?category=${encodeURIComponent(category)}`);
     if (!res.ok) return null;
     const body = await res.json();
     return body.image || null;

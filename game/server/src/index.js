@@ -86,22 +86,22 @@ app.post("/api/chat", async (req, res) => {
     // `government`, `correspondence` and `tasks` are never accepted as raw
     // overwrites — only the discrete, id-targeted `rosterEvents` /
     // `correspondenceEvents` / `taskEvents` can touch them. Anything else
-    // the model returned merges normally. `imageQuery` is ephemeral (like
-    // `choices`) — it never gets saved to the persisted state.
+    // the model returned merges normally. `imageCategory` is ephemeral
+    // (like `choices`) — it never gets saved to the persisted state.
     let newState = currentState;
-    let imageQuery = null;
+    let imageCategory = null;
     if (stateUpdate) {
       const {
         rosterEvents,
         correspondenceEvents,
         taskEvents,
-        imageQuery: extractedImageQuery,
+        imageCategory: extractedImageCategory,
         government: _ignoredRosterOverwrite,
         correspondence: _ignoredCorrespondenceOverwrite,
         tasks: _ignoredTasksOverwrite,
         ...rest
       } = stateUpdate;
-      imageQuery = extractedImageQuery || null;
+      imageCategory = extractedImageCategory || null;
       newState = mergeState(currentState, rest);
       newState = applyRosterEvents(newState, rosterEvents);
       newState = applyCorrespondenceEvents(newState, correspondenceEvents);
@@ -111,16 +111,13 @@ app.post("/api/chat", async (req, res) => {
     // Independent writes, same reasoning as the reads above.
     await Promise.all([saveHistory(newHistory), saveState(newState)]);
 
-    // Scene images were reported as "never once shown" with zero trace in
-    // the logs of the image search itself ever running — meaning the model
-    // simply wasn't including `imageQuery` in its STATE block at all. This
-    // makes that directly observable in Render's logs going forward,
-    // instead of having to infer it indirectly from silence.
     console.log(
-      imageQuery ? `[imageQuery] model requested: "${imageQuery}"` : "[imageQuery] not included this turn"
+      imageCategory
+        ? `[imageCategory] model requested: "${imageCategory}"`
+        : "[imageCategory] not included this turn"
     );
 
-    res.json({ narrative, choices, imageQuery, state: newState, usage });
+    res.json({ narrative, choices, imageCategory, state: newState, usage });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "خطا در ارتباط با گیم‌مستر. " + err.message });
@@ -128,12 +125,12 @@ app.post("/api/chat", async (req, res) => {
 });
 
 app.get("/api/image", async (req, res) => {
-  const query = String(req.query.q || "").trim();
-  if (!query) return res.json({ image: null });
-  console.log(`[api/image] request received for "${query}"`);
+  const category = String(req.query.category || "").trim();
+  if (!category) return res.json({ image: null });
+  console.log(`[api/image] request received for category "${category}"`);
   // Best-effort only: never fail the request over a bad image search — the
   // scene image is decorative, the game must keep working without it.
-  const image = await searchSceneImage(query).catch(() => null);
+  const image = await searchSceneImage(category).catch(() => null);
   console.log(image ? `[api/image] found: ${image.url}` : "[api/image] no image found");
   res.json({ image });
 });
