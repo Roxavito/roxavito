@@ -130,9 +130,11 @@ app.post("/api/chat", async (req, res) => {
 app.get("/api/image", async (req, res) => {
   const query = String(req.query.q || "").trim();
   if (!query) return res.json({ image: null });
+  console.log(`[api/image] request received for "${query}"`);
   // Best-effort only: never fail the request over a bad image search — the
   // scene image is decorative, the game must keep working without it.
   const image = await searchSceneImage(query).catch(() => null);
+  console.log(image ? `[api/image] found: ${image.url}` : "[api/image] no image found");
   res.json({ image });
 });
 

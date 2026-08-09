@@ -47,7 +47,15 @@ async function runSearch(query) {
 
   const data = await res.json();
   const pages = data?.query?.pages;
-  if (!pages) return null;
+  if (!pages) {
+    // A 200 OK with zero matching pages is a completely valid, common
+    // outcome (the query just didn't match anything on Commons) — but it
+    // used to be indistinguishable in the logs from "this code path never
+    // ran at all". Logging it turns "no image ever shows up" from a
+    // guessing game into something diagnosable from Render's logs.
+    console.log(`Wikimedia Commons: 0 results for "${query}"`);
+    return null;
+  }
 
   // `pages` is a plain object keyed by numeric page ID. JS engines always
   // iterate integer-like object keys in ascending numeric order, NOT in
@@ -69,6 +77,7 @@ async function runSearch(query) {
       };
     }
   }
+  console.log(`Wikimedia Commons: ${rankedPages.length} page(s) matched "${query}" but none had a usable thumbnail`);
   return null;
 }
 
