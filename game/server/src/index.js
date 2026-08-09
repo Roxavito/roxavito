@@ -67,8 +67,9 @@ app.post("/api/chat", async (req, res) => {
   }
 
   try {
-    const currentState = await loadState();
-    const history = await loadHistory();
+    // Independent reads — running them in parallel saves one Redis
+    // round-trip's worth of latency off every single chat request.
+    const [currentState, history] = await Promise.all([loadState(), loadHistory()]);
 
     const { narrative, stateUpdate, choices, usage } = await askGameMaster({
       currentState,
@@ -81,7 +82,6 @@ app.post("/api/chat", async (req, res) => {
       { role: "user", content: playerMessage },
       { role: "assistant", content: narrative },
     ];
-    await saveHistory(newHistory);
 
     // `government`, `correspondence` and `tasks` are never accepted as raw
     // overwrites — only the discrete, id-targeted `rosterEvents` /
@@ -107,7 +107,9 @@ app.post("/api/chat", async (req, res) => {
       newState = applyCorrespondenceEvents(newState, correspondenceEvents);
       newState = applyTaskEvents(newState, taskEvents);
     }
-    await saveState(newState);
+
+    // Independent writes, same reasoning as the reads above.
+    await Promise.all([saveHistory(newHistory), saveState(newState)]);
 
     res.json({ narrative, choices, imageQuery, state: newState, usage });
   } catch (err) {

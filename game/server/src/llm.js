@@ -3,6 +3,15 @@ import { buildSystemBlocks } from "./systemPrompt.js";
 
 const MODEL = process.env.OPENAI_MODEL || "gpt-4o";
 const MAX_TOKENS = Number(process.env.OPENAI_MAX_TOKENS || 4096);
+// The full chat transcript is resent as context on every single turn, with
+// nothing trimmed — so a session's request latency (and cost) grows with
+// every message ever sent, not just with the current turn's own size. This
+// caps how many of the most recent messages are actually replayed to the
+// model. Long-term "memory" doesn't depend on this: tasks, letters, the
+// roster and the schedule already live in the structured game state (sent
+// in full every turn regardless), so trimming older raw dialogue only
+// costs some conversational flavor/callbacks, never game-critical facts.
+const MAX_HISTORY_MESSAGES = Number(process.env.OPENAI_HISTORY_WINDOW || 40);
 
 // Created lazily (not at import time) so the server can still boot — and
 // serve the static frontend / respond to /api/state — even before an
@@ -72,11 +81,12 @@ function splitResponse(fullText) {
 
 export async function askGameMaster({ currentState, history, playerMessage }) {
   const [stableSystem, stateSystem, rulesSystem] = buildSystemBlocks(currentState);
+  const recentHistory = history.slice(-MAX_HISTORY_MESSAGES);
 
   const messages = [
     { role: "system", content: stableSystem },
     { role: "system", content: stateSystem },
-    ...history,
+    ...recentHistory,
     { role: "user", content: playerMessage },
     { role: "system", content: rulesSystem },
   ];
