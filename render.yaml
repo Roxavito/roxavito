@@ -15,3 +15,10 @@ services:
         value: gpt-4o
       - key: OPENAI_MAX_TOKENS
         value: "4096"
+      # Persistent game-state storage (Upstash Redis, free tier) — without
+      # these, the game still runs but falls back to local disk, which
+      # Render's free plan wipes on every deploy. See game/README.md.
+      - key: UPSTASH_REDIS_REST_URL
+        sync: false
+      - key: UPSTASH_REDIS_REST_TOKEN
+        sync: false

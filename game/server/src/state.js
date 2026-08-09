@@ -8,23 +8,82 @@ const STATE_PATH = path.join(DATA_DIR, "state.json");
 const HISTORY_PATH = path.join(DATA_DIR, "history.json");
 const INITIAL_STATE_PATH = path.join(DATA_DIR, "initial-state.json");
 
-function readJson(filePath, fallback) {
+// Live game state (state.json/history.json) lives in Upstash Redis when
+// configured — it's the only durable option on Render's free plan, whose
+// local disk is wiped on every deploy. Without these two env vars, storage
+// silently falls back to the local JSON files (fine for local dev, but
+// still ephemeral on a hosted free-tier deploy).
+const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL;
+const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+const useRedis = Boolean(REDIS_URL && REDIS_TOKEN);
+
+const STATE_KEY = "joseon:state";
+const HISTORY_KEY = "joseon:history";
+
+if (!useRedis) {
+  console.warn(
+    "⚠️  UPSTASH_REDIS_REST_URL/UPSTASH_REDIS_REST_TOKEN تنظیم نشده — بازی روی دیسک محلی سرور ذخیره می‌شود. روی هاست رایگان Render این یعنی وضعیت بازی با هر دیپلوی پاک می‌شود؛ برای ذخیره‌ی دائمی طبق راهنمای game/README.md یک دیتابیس Upstash Redis رایگان وصل کن."
+  );
+}
+
+function readJsonFile(filePath, fallback) {
   if (!fs.existsSync(filePath)) return fallback;
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
 }
 
-function writeJson(filePath, data) {
+function writeJsonFile(filePath, data) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
 }
 
-export function loadState() {
-  const initial = readJson(INITIAL_STATE_PATH, {});
-  return readJson(STATE_PATH, initial);
+// Upstash's REST API accepts a single command as a JSON array in the POST
+// body (["SET", key, value], ["GET", key], ...) — used instead of the
+// path-segment form (`/set/key/value`) because our values are multi-KB
+// JSON blobs full of Persian text, which is exactly the case the
+// path-segment form (URL length limits, encoding edge cases) handles worst.
+async function redisCommand(command) {
+  const res = await fetch(REDIS_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${REDIS_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(command),
+  });
+  if (!res.ok) {
+    throw new Error(`Upstash ${command[0]} failed: ${res.status} ${await res.text()}`);
+  }
+  const body = await res.json();
+  if (body.error) throw new Error(`Upstash error: ${body.error}`);
+  return body.result;
 }
 
-export function saveState(state) {
-  writeJson(STATE_PATH, state);
+async function readJson(key, filePath, fallback) {
+  if (useRedis) {
+    const raw = await redisCommand(["GET", key]);
+    return raw == null ? fallback : JSON.parse(raw);
+  }
+  return readJsonFile(filePath, fallback);
+}
+
+async function writeJson(key, filePath, data) {
+  if (useRedis) {
+    await redisCommand(["SET", key, JSON.stringify(data)]);
+    return;
+  }
+  writeJsonFile(filePath, data);
+}
+
+export async function loadState() {
+  // The seed state is always read from the bundled repo file (not Redis) —
+  // it's static content, never mutated at runtime, and must be available
+  // even the very first time a fresh Redis database is empty.
+  const initial = readJsonFile(INITIAL_STATE_PATH, {});
+  return readJson(STATE_KEY, STATE_PATH, initial);
+}
+
+export async function saveState(state) {
+  return writeJson(STATE_KEY, STATE_PATH, state);
 }
 
 export function mergeState(current, partialUpdate) {
@@ -186,17 +245,17 @@ export function applyTaskEvents(state, events) {
   };
 }
 
-export function loadHistory() {
-  return readJson(HISTORY_PATH, []);
+export async function loadHistory() {
+  return readJson(HISTORY_KEY, HISTORY_PATH, []);
 }
 
-export function saveHistory(history) {
-  writeJson(HISTORY_PATH, history);
+export async function saveHistory(history) {
+  return writeJson(HISTORY_KEY, HISTORY_PATH, history);
 }
 
-export function resetGame() {
-  const initial = readJson(INITIAL_STATE_PATH, {});
-  writeJson(STATE_PATH, initial);
-  writeJson(HISTORY_PATH, []);
+export async function resetGame() {
+  const initial = readJsonFile(INITIAL_STATE_PATH, {});
+  await writeJson(STATE_KEY, STATE_PATH, initial);
+  await writeJson(HISTORY_KEY, HISTORY_PATH, []);
   return initial;
 }

@@ -42,12 +42,22 @@ if (!process.env.OPENAI_API_KEY) {
   );
 }
 
-app.get("/api/state", (req, res) => {
-  res.json({ state: loadState() });
+app.get("/api/state", async (req, res) => {
+  try {
+    res.json({ state: await loadState() });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "خطا در بارگذاری وضعیت بازی. " + err.message });
+  }
 });
 
-app.get("/api/history", (req, res) => {
-  res.json({ history: loadHistory() });
+app.get("/api/history", async (req, res) => {
+  try {
+    res.json({ history: await loadHistory() });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "خطا در بارگذاری تاریخچه. " + err.message });
+  }
 });
 
 app.post("/api/chat", async (req, res) => {
@@ -56,10 +66,10 @@ app.post("/api/chat", async (req, res) => {
     return res.status(400).json({ error: "پیام خالی است." });
   }
 
-  const currentState = loadState();
-  const history = loadHistory();
-
   try {
+    const currentState = await loadState();
+    const history = await loadHistory();
+
     const { narrative, stateUpdate, choices, usage } = await askGameMaster({
       currentState,
       history,
@@ -71,7 +81,7 @@ app.post("/api/chat", async (req, res) => {
       { role: "user", content: playerMessage },
       { role: "assistant", content: narrative },
     ];
-    saveHistory(newHistory);
+    await saveHistory(newHistory);
 
     // `government`, `correspondence` and `tasks` are never accepted as raw
     // overwrites — only the discrete, id-targeted `rosterEvents` /
@@ -97,7 +107,7 @@ app.post("/api/chat", async (req, res) => {
       newState = applyCorrespondenceEvents(newState, correspondenceEvents);
       newState = applyTaskEvents(newState, taskEvents);
     }
-    saveState(newState);
+    await saveState(newState);
 
     res.json({ narrative, choices, imageQuery, state: newState, usage });
   } catch (err) {
@@ -115,9 +125,14 @@ app.get("/api/image", async (req, res) => {
   res.json({ image });
 });
 
-app.post("/api/reset", (req, res) => {
-  const initial = resetGame();
-  res.json({ state: initial });
+app.post("/api/reset", async (req, res) => {
+  try {
+    const initial = await resetGame();
+    res.json({ state: initial });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "خطا در شروع دوباره‌ی بازی. " + err.message });
+  }
 });
 
 if (hasClientBuild) {
